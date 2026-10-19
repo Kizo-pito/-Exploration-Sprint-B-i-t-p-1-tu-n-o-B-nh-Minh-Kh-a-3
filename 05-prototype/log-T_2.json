@@ -1,0 +1,191 @@
+{
+  "tester": "T?",
+  "mode": "claude",
+  "events": [
+    {
+      "t": "2026-10-19T15:01:23.401Z",
+      "sim": null,
+      "type": "start"
+    },
+    {
+      "t": "2026-10-19T15:01:26.592Z",
+      "sim": null,
+      "type": "screen",
+      "name": "today"
+    },
+    {
+      "t": "2026-10-19T15:01:28.204Z",
+      "sim": null,
+      "type": "screen",
+      "name": "appts"
+    },
+    {
+      "t": "2026-10-19T15:01:33.092Z",
+      "sim": null,
+      "type": "screen",
+      "name": "today"
+    },
+    {
+      "t": "2026-10-19T15:01:34.280Z",
+      "sim": null,
+      "type": "screen",
+      "name": "appts"
+    },
+    {
+      "t": "2026-10-19T15:01:35.895Z",
+      "sim": "22:01",
+      "type": "notify",
+      "text": "📍 Check-in thành công. Anh/chị đang chờ Khám Nội tổng quát tại Phòng 305, tầng 3."
+    },
+    {
+      "t": "2026-10-19T15:01:35.895Z",
+      "sim": "22:01",
+      "type": "tai_kham",
+      "scenario": "calm"
+    },
+    {
+      "t": "2026-10-19T15:01:35.900Z",
+      "sim": "22:01",
+      "type": "screen",
+      "name": "today"
+    },
+    {
+      "t": "2026-10-19T15:01:38.271Z",
+      "sim": "22:01",
+      "type": "screen",
+      "name": "chat"
+    },
+    {
+      "t": "2026-10-19T15:01:43.080Z",
+      "sim": "22:01",
+      "type": "screen",
+      "name": "today"
+    },
+    {
+      "t": "2026-10-19T15:01:44.818Z",
+      "sim": "22:01",
+      "type": "screen",
+      "name": "chat"
+    },
+    {
+      "t": "2026-10-19T15:03:35.827Z",
+      "sim": "22:03",
+      "type": "notify",
+      "text": "🔔 Còn 2 người trước anh/chị tại Phòng 305, tầng 3. Anh/chị vui lòng quay lại khu chờ."
+    },
+    {
+      "t": "2026-10-19T15:03:35.830Z",
+      "sim": "22:03",
+      "type": "system_notify",
+      "ok": false
+    },
+    {
+      "t": "2026-10-19T15:03:45.405Z",
+      "sim": "22:03",
+      "type": "screen",
+      "name": "today"
+    },
+    {
+      "t": "2026-10-19T15:13:16.833Z",
+      "sim": "22:12",
+      "type": "notify",
+      "text": "📣 Đến lượt anh/chị! Mời vào Phòng 305, tầng 3."
+    },
+    {
+      "t": "2026-10-19T15:13:16.834Z",
+      "sim": "22:12",
+      "type": "system_notify",
+      "ok": false
+    },
+    {
+      "t": "2026-10-19T15:17:44.141Z",
+      "sim": "22:17",
+      "type": "screen",
+      "name": "chat"
+    },
+    {
+      "t": "2026-10-19T15:17:46.404Z",
+      "sim": "22:17",
+      "type": "ask",
+      "q": "Nhà vệ sinh ở đâu?",
+      "route": "rules_fallback",
+      "a": "Nhà vệ sinh: cuối hành lang mỗi tầng, khoảng 2 phút đi bộ."
+    },
+    {
+      "t": "2026-10-19T15:17:51.131Z",
+      "sim": "22:17",
+      "type": "ask",
+      "q": "Tôi đi ăn sáng 20 phút có kịp không?",
+      "route": "rules_fallback",
+      "a": "Đang đến lượt anh/chị tại Phòng 305, tầng 3. Xin đừng rời đi lúc này."
+    },
+    {
+      "t": "2026-10-19T15:17:54.068Z",
+      "sim": "22:17",
+      "type": "ask",
+      "q": "Còn bao lâu đến lượt tôi?",
+      "route": "rules_fallback",
+      "a": "Đang đến lượt anh/chị, mời vào Phòng 305, tầng 3."
+    },
+    {
+      "t": "2026-10-19T15:19:57.568Z",
+      "sim": "22:19",
+      "type": "ask",
+      "q": "thu do cua Viet nam",
+      "route": "rules_fallback",
+      "a": "Em chỉ hỗ trợ được về lượt chờ, vị trí phòng và bước tiếp theo. Anh/chị có thể hỏi: \"còn bao lâu đến lượt?\", \"đi vệ sinh 10 phút có kịp không?\", \"sau khám đi đâu?\". Việc khác xin hỏi quầy hướng dẫn."
+    },
+    {
+      "t": "2026-10-19T15:20:11.600Z",
+      "sim": "22:19",
+      "type": "ask",
+      "q": "toi dang doi",
+      "route": "rules_fallback",
+      "a": "Em chỉ hỗ trợ được về lượt chờ, vị trí phòng và bước tiếp theo. Anh/chị có thể hỏi: \"còn bao lâu đến lượt?\", \"đi vệ sinh 10 phút có kịp không?\", \"sau khám đi đâu?\". Việc khác xin hỏi quầy hướng dẫn."
+    },
+    {
+      "t": "2026-10-19T15:20:19.783Z",
+      "sim": "22:19",
+      "type": "ask",
+      "q": "Kết quả xét nghiệm của tôi có sao không?",
+      "route": "rules_fallback",
+      "a": "Câu này thuộc về chuyên môn y khoa nên em không trả lời được ạ. Anh/chị vui lòng hỏi trực tiếp bác sĩ khám cho mình. Nếu thấy trong người khó chịu hơn, hãy báo ngay nhân viên y tế gần nhất."
+    },
+    {
+      "t": "2026-10-19T15:20:36.408Z",
+      "sim": "22:20",
+      "type": "notify",
+      "text": "🩺 Bác sĩ đã chỉ định thêm xét nghiệm máu và siêu âm. Xem bước tiếp theo trong Hôm nay tại viện."
+    },
+    {
+      "t": "2026-10-19T15:20:36.409Z",
+      "sim": "22:20",
+      "type": "notify",
+      "text": "➡️ Bước tiếp theo: Lấy máu xét nghiệm – Phòng 112, tầng 1 (cạnh thang máy A)."
+    },
+    {
+      "t": "2026-10-19T15:20:39.042Z",
+      "sim": "22:20",
+      "type": "ask",
+      "q": "toi nho ban toi o lai cho roi",
+      "route": "rules_fallback",
+      "a": "Em chỉ hỗ trợ được về lượt chờ, vị trí phòng và bước tiếp theo. Anh/chị có thể hỏi: \"còn bao lâu đến lượt?\", \"đi vệ sinh 10 phút có kịp không?\", \"sau khám đi đâu?\". Việc khác xin hỏi quầy hướng dẫn."
+    },
+    {
+      "t": "2026-10-19T15:20:43.934Z",
+      "sim": "22:20",
+      "type": "ask",
+      "q": "Khám xong tôi đi đâu tiếp?",
+      "route": "rules_fallback",
+      "a": "Sau bước này, anh/chị đến: Siêu âm – Phòng 210, tầng 2."
+    },
+    {
+      "t": "2026-10-19T15:20:47.696Z",
+      "sim": "22:20",
+      "type": "ask",
+      "q": "Sao hôm nay lâu vậy?",
+      "route": "rules_fallback",
+      "a": "Còn 5 người trước anh/chị tại Phòng 112, tầng 1 (cạnh thang máy A), khoảng 5–20 phút. Lý do: tốc độ phòng hôm nay như thường lệ. Khi bảng gọi số H633744 là chuẩn."
+    }
+  ]
+}

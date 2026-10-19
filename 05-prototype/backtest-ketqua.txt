@@ -1,0 +1,4 @@
+Số dự đoán: 37000
+Sai số tuyệt đối trung bình (phút):  A ngây thơ = 10.2 | B theo loại lượt = 8.4 | C + tốc độ hôm nay = 7.1
+Tỉ lệ thời gian thật nằm trong khoảng P10–P90 (mục tiêu ~80%):  B = 63.6% | C bản đầu (coi tốc độ là chắc chắn) = 70.6% | C bản sửa (có độ bất định tốc độ) = 83.2%
+Quy tắc "rời 20 phút": nói "kịp" 16998 lần, trong đó lỡ lượt 3 lần (0.02%)

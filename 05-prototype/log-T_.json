@@ -1,0 +1,230 @@
+{
+  "tester": "T?",
+  "mode": "rules",
+  "events": [
+    {
+      "t": "2026-10-19T13:43:20.611Z",
+      "sim": null,
+      "type": "start"
+    },
+    {
+      "t": "2026-10-19T13:43:29.327Z",
+      "sim": null,
+      "type": "screen",
+      "name": "appts"
+    },
+    {
+      "t": "2026-10-19T13:43:30.742Z",
+      "sim": null,
+      "type": "screen",
+      "name": "booking"
+    },
+    {
+      "t": "2026-10-19T13:43:39.362Z",
+      "sim": null,
+      "type": "booking_invalid",
+      "missing": [
+        "name",
+        "dob",
+        "phone",
+        "gender",
+        "place",
+        "spec",
+        "type"
+      ]
+    },
+    {
+      "t": "2026-10-19T13:44:10.857Z",
+      "sim": null,
+      "type": "notify",
+      "text": "✅ Đặt hẹn thành công: Tim mạch, 08:00 ngày 21/10/2026."
+    },
+    {
+      "t": "2026-10-19T13:44:10.858Z",
+      "sim": null,
+      "type": "kham_moi",
+      "spec": "tim",
+      "today": false
+    },
+    {
+      "t": "2026-10-19T13:44:10.858Z",
+      "sim": null,
+      "type": "screen",
+      "name": "success"
+    },
+    {
+      "t": "2026-10-19T13:44:12.964Z",
+      "sim": null,
+      "type": "screen",
+      "name": "home"
+    },
+    {
+      "t": "2026-10-19T13:47:44.094Z",
+      "sim": null,
+      "type": "quick_appt"
+    },
+    {
+      "t": "2026-10-19T13:47:44.095Z",
+      "sim": null,
+      "type": "screen",
+      "name": "appts"
+    },
+    {
+      "t": "2026-10-19T13:48:16.103Z",
+      "sim": "07:50",
+      "type": "notify",
+      "text": "📍 Check-in thành công. Anh/chị đang chờ Khám Nội tổng quát tại Phòng 305, tầng 3."
+    },
+    {
+      "t": "2026-10-19T13:48:16.103Z",
+      "sim": "07:50",
+      "type": "tai_kham",
+      "scenario": "busy"
+    },
+    {
+      "t": "2026-10-19T13:48:16.108Z",
+      "sim": "07:50",
+      "type": "screen",
+      "name": "today"
+    },
+    {
+      "t": "2026-10-19T13:48:37.205Z",
+      "sim": "07:50",
+      "type": "leave_check",
+      "min": 20,
+      "ok": true
+    },
+    {
+      "t": "2026-10-19T13:48:44.654Z",
+      "sim": "07:50",
+      "type": "leave_check",
+      "min": 20,
+      "ok": true
+    },
+    {
+      "t": "2026-10-19T13:48:46.173Z",
+      "sim": "07:50",
+      "type": "screen",
+      "name": "today"
+    },
+    {
+      "t": "2026-10-19T13:48:46.189Z",
+      "sim": "07:50",
+      "type": "emergency",
+      "source": "button"
+    },
+    {
+      "t": "2026-10-19T13:48:53.203Z",
+      "sim": "07:50",
+      "type": "leave_check",
+      "min": 10,
+      "ok": true
+    },
+    {
+      "t": "2026-10-19T13:48:54.520Z",
+      "sim": "07:50",
+      "type": "leave_check",
+      "min": 10,
+      "ok": true
+    },
+    {
+      "t": "2026-10-19T13:48:55.883Z",
+      "sim": "07:50",
+      "type": "leave_check",
+      "min": 30,
+      "ok": true
+    },
+    {
+      "t": "2026-10-19T13:49:06.928Z",
+      "sim": "08:05",
+      "type": "tick",
+      "minutes": 15
+    },
+    {
+      "t": "2026-10-19T13:49:09.316Z",
+      "sim": "08:20",
+      "type": "tick",
+      "minutes": 15
+    },
+    {
+      "t": "2026-10-19T13:49:12.988Z",
+      "sim": "08:27",
+      "type": "notify",
+      "text": "🔔 Còn 2 người trước anh/chị tại Phòng 305, tầng 3. Anh/chị vui lòng quay lại khu chờ."
+    },
+    {
+      "t": "2026-10-19T13:49:12.990Z",
+      "sim": "08:35",
+      "type": "tick",
+      "minutes": 15
+    },
+    {
+      "t": "2026-10-19T13:49:20.835Z",
+      "sim": "08:35",
+      "type": "leave_check",
+      "min": 20,
+      "ok": false
+    },
+    {
+      "t": "2026-10-19T13:49:32.945Z",
+      "sim": "08:35",
+      "type": "leave_check",
+      "min": 10,
+      "ok": false
+    },
+    {
+      "t": "2026-10-19T13:49:34.292Z",
+      "sim": "08:35",
+      "type": "leave_check",
+      "min": 10,
+      "ok": false
+    },
+    {
+      "t": "2026-10-19T13:49:34.724Z",
+      "sim": "08:35",
+      "type": "leave_check",
+      "min": 10,
+      "ok": false
+    },
+    {
+      "t": "2026-10-19T13:49:35.425Z",
+      "sim": "08:35",
+      "type": "leave_check",
+      "min": 10,
+      "ok": false
+    },
+    {
+      "t": "2026-10-19T13:49:35.651Z",
+      "sim": "08:35",
+      "type": "leave_check",
+      "min": 10,
+      "ok": false
+    },
+    {
+      "t": "2026-10-19T13:49:36.847Z",
+      "sim": "08:35",
+      "type": "leave_check",
+      "min": 30,
+      "ok": false
+    },
+    {
+      "t": "2026-10-19T13:49:37.945Z",
+      "sim": "08:35",
+      "type": "leave_check",
+      "min": 10,
+      "ok": false
+    },
+    {
+      "t": "2026-10-19T13:49:39.278Z",
+      "sim": "08:44",
+      "type": "notify",
+      "text": "📣 Đến lượt anh/chị! Mời vào Phòng 305, tầng 3."
+    },
+    {
+      "t": "2026-10-19T13:49:39.278Z",
+      "sim": "08:50",
+      "type": "tick",
+      "minutes": 15
+    }
+  ]
+}

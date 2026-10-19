@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Chờ tại viện – slides</title>
+<style>
+  @page{size:1280px 720px;margin:0}
+  :root{--teal:#2fa59c;--teal2:#3cc3a6;--dark:#1d6f69;--soft:#e4f5f2;--ink:#1f2a30;--muted:#66747c;--orange:#f5a623;--red:#d64545}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",system-ui,sans-serif;color:var(--ink);background:#888}
+  .s{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;page-break-after:always;padding:56px 72px}
+  .s:last-child{page-break-after:auto}
+  .num{position:absolute;right:40px;bottom:26px;color:var(--muted);font-size:15px}
+  .kicker{color:var(--teal);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:16px}
+  h1{font-size:44px;margin:6px 0 18px;line-height:1.15}
+  h2{font-size:36px;margin:4px 0 22px;line-height:1.2}
+  p,li{font-size:21px;line-height:1.45}
+  .muted{color:var(--muted)}
+  .cols{display:grid;gap:36px}
+  .c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:repeat(3,1fr)}
+  .box{background:var(--soft);border-radius:18px;padding:20px 24px}
+  .box h3{margin:0 0 8px;font-size:22px;color:var(--dark)}
+  .box p,.box li{font-size:18px;margin:4px 0}
+  .quote{border-left:5px solid var(--orange);padding:4px 0 4px 16px;font-style:italic;font-size:19px;margin:10px 0;color:#3a464d}
+  .big{font-size:64px;font-weight:800;color:var(--dark);line-height:1}
+  table{border-collapse:collapse;width:100%;font-size:18px}
+  td,th{padding:9px 10px;border-bottom:1px solid #e2e8eb;text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  .bar{display:inline-block;height:14px;background:var(--teal);border-radius:7px;vertical-align:middle}
+  .phone{height:560px;border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+  .title{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff}
+  .title .kicker{color:#dff7f2}
+  .ns{font-size:30px;line-height:1.4;background:var(--soft);border-radius:20px;padding:26px 32px;border-left:8px solid var(--teal)}
+  .ns b{color:var(--dark)}
+  .tag{display:inline-block;background:#fff1dc;color:#9a5b00;border-radius:999px;padding:2px 12px;font-size:15px;font-weight:700}
+  .warn{background:#fff6e5;border-radius:14px;padding:12px 18px;font-size:17px}
+  .red{background:#fdeaea}
+  ul{margin:6px 0;padding-left:24px}
+  .tl{background:#e4f5f2;border-radius:12px;padding:8px 9px;display:flex;flex-direction:column;gap:2px;min-height:108px}
+  .tl b{font-size:15px;color:#1d6f69}.tl span{font-size:12px;color:#66747c}.tl i{font-style:normal;font-size:13px;line-height:1.3}
+  .tl em{font-style:normal;font-size:12.5px;font-weight:700;color:#66747c;margin-top:auto}
+  .tl.gate{background:#fff1dc}.tl.gate em{color:#9a5b00}
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="s title">
+  <div class="kicker" style="margin-top:120px">Exploration Sprint Vinmec × VinUni VRIC · Bài tập 1 tuần</div>
+  <h1 style="font-size:62px;margin-top:14px">Một lần đi khám:<br>khoảnh khắc <u>Chờ tại viện</u></h1>
+  <p style="font-size:26px;max-width:900px;opacity:.95">Người bệnh không chỉ khổ vì chờ lâu, mà vì <b>không biết</b> phải chờ bao lâu.</p>
+  <p style="margin-top:80px;font-size:20px">[Đào Bình Minh] · [K3] · 20/10/2026</p>
+</section>
+
+<!-- 2 -->
+<section class="s">
+  <div class="kicker">Mình đã làm gì</div>
+  <h2>Hỏi rộng cả hành trình trước, rồi mới chọn một khoảnh khắc</h2>
+  <div class="cols c3">
+    <div class="box"><div class="big">5</div><h3>người trả lời khảo sát</h3><p>50 câu, phủ 5 khoảnh khắc: đặt lịch, check-in, chờ, kết quả, tái khám. Có xin đồng ý, ẩn danh P1–P5.</p></div>
+    <div class="box"><div class="big">1</div><h3>app được dùng thử</h3><p>MyVinmec: có đặt lịch, nhưng khi người bệnh đã đến viện thì app <b>không còn đi cùng họ</b>.</p></div>
+    <div class="box"><div class="big">3</div><h3>best practice quốc tế</h3><p>SingHealth (Singapore) · Shanghai Children's (Trung Quốc) · HUG Genève (Thuỵ Sĩ)</p></div>
+  </div>
+  <div class="box" style="margin-top:28px"><p style="font-size:19px;margin:0"><b>Phương thức phỏng vấn:</b> điền form có cấu trúc (Google Form, 50 câu) · người được phỏng vấn: <b>người thân trong gia đình</b> · có xin đồng ý trước, ẩn danh P1–P5, chỉ hỏi về trải nghiệm dịch vụ.</p></div>
+  <div class="num">2</div>
+</section>
+
+<!-- 3 -->
+<section class="s">
+  <div class="kicker">Insight</div>
+  <h2>Chờ là gốc của vấn đề, tái khám bị bỏ là hệ quả</h2>
+  <div class="cols c2">
+    <table>
+      <tr><th>Tín hiệu</th><th>Đếm</th></tr>
+      <tr><td>Chờ là bước lâu hoặc khó chịu nhất</td><td><span class="bar" style="width:128px"></span> 4/5</td></tr>
+      <tr><td>Không biết còn bao lâu đến lượt</td><td><span class="bar" style="width:128px"></span> 4/5</td></tr>
+      <tr><td>Không dám rời chỗ vì sợ lỡ lượt</td><td><span class="bar" style="width:128px"></span> 4/5</td></tr>
+      <tr><td>Có hẹn vẫn chờ thủ tục lâu</td><td><span class="bar" style="width:160px"></span> 4/4</td></tr>
+      <tr><td>Không ai báo bước tiếp theo</td><td><span class="bar" style="width:96px"></span> 3/5</td></tr>
+      <tr><td>Chưa từng đặt lịch qua app</td><td><span class="bar" style="width:160px"></span> 5/5</td></tr>
+    </table>
+    <div>
+      <div class="quote">"Có nhưng k biết chính xác bao nhiêu thời gian" (P2)</div>
+      <div class="quote">"Thấy mệt mỏi khi chờ vì bệnh viện quá tải k có chỗ ngồi" (P4)</div>
+      <div class="quote">"có ai cách nào báo được không" (P1)</div>
+      <div class="quote">"yên tâm đặt lịch và thông báo / không yên tâm khi nó kê đơn thuốc" (P3)</div>
+      <p class="muted" style="font-size:17px">P1, P3: có thể bỏ tái khám vì "mất thời gian chờ đợi".</p>
+    </div>
+  </div>
+  <div class="num">3</div>
+</section>
+
+<!-- 4 -->
+<section class="s">
+  <div class="kicker">Journey map</div>
+  <h2>Một ngày khám có 4 lần chờ, chỉ 2 lần được khám</h2>
+  <svg width="1136" height="360" viewBox="0 0 1196 360">
+    <line x1="100" y1="300" x2="1110" y2="300" stroke="#cfd8dc"/>
+    <g font-size="13" fill="#66747c"><text x="0" y="130">ổn</text><text x="0" y="190">bình thường</text><text x="0" y="245">khó chịu</text><text x="0" y="295">rất khó chịu</text></g>
+    <polyline fill="none" transform="translate(60,0)" stroke="#2fa59c" stroke-width="4" points="90,185 230,240 370,290 510,125 650,290 790,240 930,185 1070,240"/>
+    <g fill="#2fa59c" transform="translate(60,0)"><circle cx="90" cy="185" r="8"/><circle cx="510" cy="125" r="8"/><circle cx="930" cy="185" r="8"/></g>
+    <g fill="#d64545" transform="translate(60,0)"><circle cx="230" cy="240" r="10"/><circle cx="370" cy="290" r="10"/><circle cx="650" cy="290" r="10"/><circle cx="790" cy="240" r="10"/><circle cx="1070" cy="240" r="8"/></g>
+    <g font-size="15" text-anchor="middle" fill="#1f2a30" transform="translate(60,0)">
+      <text x="90" y="330">Quyết định</text><text x="230" y="330">Đăng ký ~1h</text><text x="370" y="330">Chờ gọi khám</text>
+      <text x="510" y="330">Khám</text><text x="650" y="330">Chờ XN, siêu âm…</text><text x="790" y="330">Chờ kết quả ~2h</text>
+      <text x="930" y="330">Đọc kết quả</text><text x="1070" y="330">Tái khám</text>
+    </g>
+    <g transform="translate(60,0)" font-size="14" fill="#d64545" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="6" stroke-linejoin="round">
+      <text x="230" y="222">PP1 có hẹn vẫn chờ</text><text x="370" y="262">PP2 không biết bao lâu</text><text x="370" y="352"> </text>
+      <text x="650" y="262">PP3 sợ lỡ lượt · PP4 đi đâu tiếp?</text><text x="790" y="222">PP5 lo âu, tự tra cứu</text><text x="1070" y="222">bỏ vì chờ lâu</text>
+    </g>
+  </svg>
+  <p class="muted" style="font-size:18px;margin-top:0">P2 tự khai: chờ đăng ký hơn 1h + chờ khám 40p + chờ kết quả gần 2h ≈ <b>3h40 chỉ để chờ</b>, dù vẫn chấm buổi khám 9/10.</p>
+  <div class="num">4</div>
+</section>
+
+<!-- 5 -->
+<section class="s">
+  <div class="kicker">Need statement (Biodesign)</div>
+  <div class="ns" style="margin-top:20px">
+    Cách để <b>giảm sự bất định trong lúc chờ</b> <span class="tag">outcome</span><br>
+    cho <b>người bệnh trung niên đến khám ngoại trú trực tiếp</b> <span class="tag">population</span>,<br>
+    những người <b>không biết còn bao lâu đến lượt và bước tiếp theo là gì, nên phải ngồi bám chỗ hàng giờ vì sợ lỡ lượt</b> <span class="tag">problem</span>.
+  </div>
+  <div class="cols c2" style="margin-top:28px">
+    <div><h3 style="font-size:22px;margin:0 0 6px">Vì sao "giảm bất định" mà không phải "giảm thời gian chờ"?</h3>
+      <p style="font-size:18px">Số bác sĩ, số phòng nằm ngoài tầm với của một nhóm 2 người. Còn sự bất định thì có thể giảm bằng thông tin. Maister (1985): <i>chờ không biết trước cảm thấy dài hơn chờ có thời hạn rõ</i>.</p></div>
+    <div><h3 style="font-size:22px;margin:0 0 6px">Đo bằng gì?</h3>
+      <ul style="font-size:18px"><li>% người bệnh trả lời được "còn khoảng bao lâu" (hiện tại 1/5)</li><li>% người bệnh dám rời khu chờ</li><li>Mức lo lắng khi chờ (1–5) · số lần hỏi quầy</li></ul></div>
+  </div>
+  <div class="num">5</div>
+</section>
+
+<!-- 6 -->
+<section class="s">
+  <div class="kicker">3 best practice → bài học cho Vinmec</div>
+  <h2>Thế giới đã làm, và đã vấp ở đâu</h2>
+  <div class="cols c3">
+    <div class="box"><svg viewBox="0 0 300 130" width="100%" height="130" aria-label="Minh hoạ: app hiện còn 3 người và trạm tiếp theo">
+        <rect x="95" y="4" width="110" height="122" rx="14" fill="#fff" stroke="#1d6f69" stroke-width="2.5"/>
+        <rect x="95" y="4" width="110" height="24" rx="14" fill="#2fa59c"/><rect x="95" y="16" width="110" height="12" fill="#2fa59c"/>
+        <text x="150" y="21" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">Hàng chờ</text>
+        <text x="150" y="54" text-anchor="middle" font-size="19" fill="#1d6f69" font-weight="800">3 người</text>
+        <text x="150" y="68" text-anchor="middle" font-size="10" fill="#66747c">trước bạn</text>
+        <g font-size="9" fill="#1f2a30"><circle cx="110" cy="88" r="5" fill="#2f8f4e"/><text x="120" y="91">Đăng ký</text>
+        <circle cx="110" cy="102" r="5" fill="#2fa59c"/><text x="120" y="105" font-weight="700">Khám · P.2</text>
+        <circle cx="110" cy="116" r="5" fill="#fff" stroke="#cfd8dc"/><text x="120" y="119" fill="#66747c">Thu ngân</text></g>
+        <path d="M218 40 q22 0 30 18" fill="none" stroke="#f5a623" stroke-width="2" stroke-dasharray="4 3"/>
+        <text x="228" y="76" font-size="11" fill="#9a5b00" font-weight="700">↻ 5 phút</text>
+        <text x="20" y="64" font-size="11" fill="#9a5b00" font-weight="700">Không</text><text x="20" y="78" font-size="11" fill="#9a5b00" font-weight="700">ưu tiên</text>
+      </svg><h3>SingHealth · Q Track</h3><p>Đăng ký trên app trước giờ hẹn 60–90 phút; xem <b>còn bao nhiêu người</b> và <b>trạm tiếp theo</b>; cập nhật 5 phút/lần; <b>không ưu tiên</b> người dùng app.</p><p style="color:var(--dark)"><b>→</b> Hiện "còn N người" + bước tiếp theo; công bằng với người không dùng app.</p></div>
+    <div class="box"><svg viewBox="0 0 300 130" width="100%" height="130" aria-label="Minh hoạ: tin nhắn báo trước 15 phút và biểu đồ thời gian chờ 126 xuống 33 phút">
+        <rect x="14" y="10" width="140" height="58" rx="14" fill="#fff" stroke="#1d6f69" stroke-width="2"/>
+        <path d="M40 68 l-8 14 l20 -14z" fill="#fff" stroke="#1d6f69" stroke-width="2" stroke-linejoin="round"/><rect x="34" y="64" width="20" height="6" fill="#fff"/>
+        <text x="28" y="34" font-size="13">🔔</text>
+        <text x="48" y="34" font-size="12" fill="#1f2a30" font-weight="700">Sắp đến lượt</text>
+        <text x="28" y="54" font-size="11" fill="#66747c">còn khoảng 15 phút</text>
+        <g font-size="10" fill="#1f2a30">
+          <rect x="190" y="14" width="34" height="96" rx="4" fill="#cfd8dc"/><text x="207" y="124" text-anchor="middle">Trước</text>
+          <text x="207" y="10" text-anchor="middle" font-weight="700">126'</text>
+          <rect x="240" y="85" width="34" height="25" rx="4" fill="#2fa59c"/><text x="257" y="124" text-anchor="middle">Sau</text>
+          <text x="257" y="80" text-anchor="middle" font-weight="700" fill="#1d6f69">33'</text>
+        </g>
+        <g transform="translate(30,96)"><rect width="110" height="10" rx="5" fill="#e2e8eb"/><rect width="20" height="10" rx="5" fill="#f5a623"/>
+          <text x="0" y="28" font-size="10" fill="#9a5b00" font-weight="700">chỉ ~18% người dùng</text></g>
+      </svg><h3>Shanghai Children's · WeChat</h3><p>Báo trước 15 phút. Thời gian chờ trung bình 126 → 33 phút (so sánh trước–sau). Nhưng chỉ <b>~18%</b> người bệnh dùng.</p><p style="color:var(--dark)"><b>→</b> Đặt vào kênh người bệnh đã dùng sẵn; tỉ lệ người dùng là nút thắt; không hứa trước con số.</p></div>
+    <div class="box"><svg viewBox="0 0 300 130" width="100%" height="130" aria-label="Minh hoạ: người bệnh rời khu chờ ra căng tin, nhận SMS gọi quay lại">
+        <rect x="14" y="40" width="80" height="78" rx="6" fill="#fff" stroke="#1d6f69" stroke-width="2"/>
+        <rect x="46" y="22" width="16" height="16" rx="2" fill="#d64545"/><rect x="52" y="25" width="4" height="10" fill="#fff"/><rect x="49" y="28" width="10" height="4" fill="#fff"/>
+        <text x="54" y="72" text-anchor="middle" font-size="10" fill="#1f2a30" font-weight="700">Khu chờ</text>
+        <text x="54" y="86" text-anchor="middle" font-size="9" fill="#66747c">cấp cứu</text>
+        <path d="M100 104 C140 112 170 112 200 104" fill="none" stroke="#2fa59c" stroke-width="2.5" marker-end="url(#ah)"/>
+        <path d="M200 84 C170 70 140 70 104 82" fill="none" stroke="#f5a623" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#ah2)"/>
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2fa59c"/></marker>
+          <marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f5a623"/></marker></defs>
+        <circle cx="236" cy="70" r="7" fill="#1d6f69"/><path d="M236 77 v22 M236 84 l-9 8 M236 84 l9 8 M236 99 l-7 14 M236 99 l7 14" stroke="#1d6f69" stroke-width="3" stroke-linecap="round"/>
+        <text x="236" y="126" text-anchor="middle" font-size="10" fill="#1f2a30">căng tin / vườn</text>
+        <rect x="140" y="6" width="148" height="48" rx="10" fill="#fff6e5" stroke="#f5a623" stroke-width="1.5"/>
+        <text x="150" y="20" font-size="10" fill="#9a5b00" font-weight="700">✉ SMS</text>
+        <text x="150" y="33" font-size="10" fill="#1f2a30">Mời quay lại trong 15'</text>
+        <text x="150" y="47" font-size="9" fill="#9a5b00">nhắc lại 20'/lần, tối đa 4 lần</text>
+      </svg><h3>HUG Genève · SMS gọi lại</h3><p>Ca nhẹ được rời khu chờ, SMS gọi quay lại; nhắc mỗi 20 phút, tối đa 4 lần. 97% hài lòng. <b>Loại trừ ca nặng.</b></p><p style="color:var(--dark)"><b>→</b> Cho phép rời chỗ kèm cam kết gọi lại; tiêu chí loại trừ là tính năng an toàn.</p></div>
+  </div>
+  <p class="muted" style="font-size:13px;margin-top:12px">Hình minh hoạ do tác giả tự vẽ để mô tả cơ chế, không phải giao diện thật của các bệnh viện. Nguồn: SingHealth Health Buddy FAQs; Wu et al., Pak J Med Sci 2021; Ehrler et al., JMIR Med Inform 2022.</p>
+  <div class="num">6</div>
+</section>
+
+<!-- 7 -->
+<section class="s">
+  <div class="kicker">Prototype · phong cách MyVinmec · mở 05-prototype/index.html</div>
+  <div style="display:flex;gap:26px;align-items:flex-start;margin-top:10px">
+    <img class="phone" src="img/booking.png">
+    <img class="phone" src="img/today.png">
+    <img class="phone" src="img/chat.png">
+    <div style="flex:1">
+      <h2 style="font-size:28px">Đặt lịch → Check-in → "Hôm nay tại viện"</h2>
+      <ul style="font-size:16px">
+        <li><b>Còn N người · khoảng A–B phút</b>, kèm lời giải thích vì sao</li>
+        <li><b>Rời chỗ 10/20/30 phút: có kịp không?</b></li>
+        <li>Báo khi còn 2 người, khi đến lượt, khi có bước mới hoặc có kết quả</li>
+        <li>Trợ lý chat; mỗi câu trả lời ghi <b>nguồn</b></li>
+        <li>Form đặt lịch <b>tự lưu bản nháp</b> (P2 từng mất thông tin vừa khai)</li>
+      </ul>
+      <p class="muted" style="font-size:15px">Dữ liệu giả lập 100%. Không phải app chính thức.</p>
+    </div>
+  </div>
+  <div class="num">7</div>
+</section>
+
+<!-- 8 -->
+<section class="s">
+  <div class="kicker">Trợ lý lấy thông tin từ đâu?</div>
+  <h2>AI không đoán giờ. Bộ ước tính tính, AI chỉ diễn đạt lại.</h2>
+  <div class="cols c2">
+    <div>
+      <p style="font-size:19px;margin-top:0"><b>Nguồn dữ liệu:</b> hệ thống xếp hàng (giờ gọi số) · HIS (loại lượt, chỉ định) · LIS (giờ có kết quả, <i>không</i> lấy nội dung). Không cần chẩn đoán.</p>
+      <p style="font-size:19px"><b>Mỗi người khám lâu khác nhau</b>, nên ước tính cộng từ:</p>
+      <ol style="font-size:18px"><li><b>Loại lượt</b> của từng người phía trước (khám mới ~11', tái khám ~6', đọc kết quả ~4')</li><li><b>Tốc độ phòng hôm nay</b>, học từ 8 lượt gần nhất</li><li><b>Độ bất định</b>: mô phỏng 800 lần → khoảng P10–P90</li></ol>
+    </div>
+    <div class="box">
+      <h3>Backtest trên dữ liệu giả lập (37.000 dự đoán)</h3>
+      <table style="font-size:16.5px">
+        <tr><th>Cách</th><th>Sai số TB</th><th>Đúng trong khoảng</th></tr>
+        <tr><td>Số người × 7 phút</td><td>10,2'</td><td>–</td></tr>
+        <tr><td>+ loại lượt</td><td>8,4'</td><td>64%</td></tr>
+        <tr><td>+ tốc độ hôm nay</td><td>7,1'</td><td>71% (chưa đạt 80%)</td></tr>
+        <tr><td><b>+ độ bất định tốc độ</b></td><td><b>7,1'</b></td><td><b>83% (đạt)</b></td></tr>
+      </table>
+      <p style="font-size:15.5px">Nói "kịp rời 20 phút": lỡ lượt 0,02%. <b>Giới hạn:</b> dữ liệu sinh từ chính giả định của mô hình, nên cần chạy lại trên log thật của Vinmec.</p>
+    </div>
+  </div>
+  <div class="num">8</div>
+</section>
+
+<!-- 9 -->
+<section class="s">
+  <div class="kicker">Rủi ro an toàn &amp; đạo đức</div>
+  <div style="display:flex;gap:30px;align-items:flex-start">
+    <div style="flex:1">
+      <h2>Thà báo nhầm còn hơn bỏ sót</h2>
+      <table style="font-size:16.5px">
+        <tr><th>Rủi ro</th><th>Giảm thiểu</th></tr>
+        <tr><td>Có dấu hiệu nặng nhưng vẫn ngồi chờ</td><td>Từ khoá nguy hiểm + nút "Tôi thấy không khoẻ" → gọi điều dưỡng; chạy <b>trước</b> AI</td></tr>
+        <tr><td>AI tư vấn y khoa</td><td>Từ chối; AI không được nhận kết quả hay chẩn đoán</td></tr>
+        <tr><td>Ước tính sai → lỡ lượt</td><td>Hiện khoảng; chỉ nói "kịp" khi dư 10'; loa là chuẩn; chính sách giữ lượt</td></tr>
+        <tr><td>Lộ dữ liệu · lừa đảo (4/5 lo)</td><td>Dữ liệu tối thiểu; chỉ dùng kênh chính thức; không bao giờ gửi link thanh toán</td></tr>
+        <tr><td>Bất bình đẳng số</td><td>Không ưu tiên người dùng app; giữ bảng gọi số và loa</td></tr>
+      </table>
+    </div>
+    <img class="phone" style="height:540px" src="img/emergency.png">
+  </div>
+  <div class="num">9</div>
+</section>
+
+<!-- 10 -->
+<section class="s" style="padding-top:44px">
+  <div class="kicker">Vai 2 · dẫn dắt 5–10 bạn K4 (3–5 cặp)</div>
+  <h2 style="font-size:32px;margin-bottom:14px">Mình sẽ coach nhóm K4 thế nào</h2>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px">
+    <div class="tl"><b>Tuần 0</b><span>trước 28/10</span><i>Đào tạo · NDA · ghép cặp</i><em>Kiểm tra đầu vào</em></div>
+    <div class="tl"><b>Tuần 1</b><span>29/10–06/11</span><i>Quan sát · phỏng vấn</i><em>Cổng dữ liệu thật</em></div>
+    <div class="tl gate"><b>Tuần 2</b><span>09–13/11</span><i>Need statement</i><em>⚑ Cổng 1</em></div>
+    <div class="tl"><b>Tuần 3</b><span>16–20/11</span><i>Prototype (dữ liệu giả lập)</i><em>Checkpoint</em></div>
+    <div class="tl gate"><b>Tuần 4</b><span>23–27/11</span><i>Thử người dùng vòng 1</i><em>⚑ Giữa kỳ</em></div>
+    <div class="tl gate"><b>Tuần 5</b><span>30/11–04/12</span><i>Thử vòng 2 · đề xuất</i><em>⚑ Cổng 2</em></div>
+    <div class="tl gate"><b>Tuần 6</b><span>07–11/12</span><i>Đóng gói</i><em>⚑ Demo Day</em></div>
+  </div>
+  <p class="muted" style="font-size:14px;margin:0 0 12px">Nhịp tuần: thứ Hai chốt việc với từng cặp · thứ Tư check-in, cặp vàng gặp 30 phút · thứ Năm đọc nháp, cặp đỏ báo mentor trước checkpoint · thứ Sáu thu báo cáo</p>
+  <div class="cols c3" style="gap:18px">
+    <div class="box" style="padding:14px 18px"><h3 style="font-size:19px">1 · Mốc</h3>
+      <p>Bảng theo dõi chung: mỗi cặp một dòng, đèn xanh · vàng · đỏ.</p>
+      <p>Cặp đỏ thì báo mentor <b>từ thứ Năm</b>, không để checkpoint mới lộ.</p>
+      <p>Cổng 1 và giữa kỳ: gộp bài trùng, không loại nhóm.</p></div>
+    <div class="box" style="padding:14px 18px"><h3 style="font-size:19px">2 · Báo cáo</h3>
+      <p>Mẫu 5 dòng, hạn 17h thứ Sáu. Report thử người dùng đủ <b>4 phần</b>.</p>
+      <p>Nhắc trễ: 12 giờ nhắn → 24 giờ gọi → lần 2 báo mentor.</p>
+      <p>Tối thứ Sáu: <b>1 trang tổng hợp</b> gửi mentor.</p></div>
+    <div class="box" style="padding:14px 18px"><h3 style="font-size:19px">3 · Đào tạo &amp; chất lượng</h3>
+      <p>Làm mẫu → làm cùng → tự làm; nhóm kẹt thì mình <b>hỏi</b>, không làm hộ.</p>
+      <p><b>4 cổng:</b> dữ liệu là thật (có bản ghi gốc, hỏi lại ngẫu nhiên) · chỉ lấy hoàn cảnh · need statement · prototype an toàn.</p></div>
+  </div>
+  <div class="warn" style="margin-top:14px;font-size:15.5px"><b>Nếu được vào viện, bài toán của mình:</b> Tuần 1 kiểm chứng bệnh nhân Vinmec có sợ lỡ lượt không · chạy lại backtest trên log xếp hàng đã khử định danh (sandbox) · thử với 3–5 người bệnh · khoa Cấp cứu duyệt quy trình gọi điều dưỡng.</div>
+  <div class="num">10</div>
+</section>
+</body>
+</html>

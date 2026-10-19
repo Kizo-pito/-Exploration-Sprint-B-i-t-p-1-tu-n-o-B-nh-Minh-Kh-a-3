@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trợ lý Chờ khám – prototype</title>
+<style>
+  :root{
+    --teal:#2fa59c; --teal-2:#3cc3a6; --teal-dark:#21857e; --teal-soft:#e4f5f2;
+    --orange:#f5a623; --red:#e5484d; --ink:#1f2a30; --muted:#7a8790; --line:#e6eaed; --bg:#f3f4f6;
+    --ok:#2f8f4e; --ok-soft:#e6f4ea; --bad-soft:#fdeaea; --warn-soft:#fff6e5;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:#dfe6e9;color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  button{font:inherit;cursor:pointer}
+  .wrap{display:flex;gap:24px;justify-content:center;align-items:flex-start;padding:20px 16px;flex-wrap:wrap}
+
+  /* ---------- khung điện thoại ---------- */
+  .phone{position:relative;width:100%;max-width:400px;height:820px;background:var(--bg);border-radius:34px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.18);display:flex;flex-direction:column}
+  .screen{display:none;flex:1;overflow-y:auto;flex-direction:column;padding-bottom:90px}
+  .screen.on{display:flex}
+  .screen > *{flex-shrink:0}
+  .screen.nonav{padding-bottom:0}
+
+  /* header kiểu MyVinmec */
+  .hero{position:relative;background:linear-gradient(135deg,var(--teal) 0%,var(--teal-2) 100%);color:#fff;padding:22px 20px 26px;overflow:hidden;flex:none}
+  .hero h1{margin:0;font-size:26px;font-weight:800;letter-spacing:.2px}
+  .hero p{margin:4px 0 0;opacity:.95;font-size:14px}
+  .hero .leaf{position:absolute;opacity:.35}
+  .hero .actions{position:absolute;right:16px;top:20px;display:flex;gap:10px}
+  .circle{width:42px;height:42px;border-radius:50%;background:#fff;display:grid;place-items:center;border:0}
+  .backbar{display:flex;align-items:center;gap:12px}
+  .backbar button{background:none;border:0;color:inherit;padding:0;display:grid;place-items:center}
+  .plain-head{background:#fff;padding:18px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);flex:none}
+  .plain-head h2{margin:0;font-size:19px;flex:1;text-align:center;padding-right:28px}
+  .plain-head button{background:none;border:0;padding:0}
+
+  .card{background:#fff;border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,.05);padding:16px;margin:12px 16px}
+  .pull{margin-top:-14px;position:relative}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 6px}
+  .tile{background:none;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px;color:var(--ink);text-align:center;position:relative}
+  .tile .ic{width:56px;height:56px;border-radius:50%;background:var(--teal-soft);display:grid;place-items:center}
+  .tile .ic.new{background:#fff;border:2px dashed var(--orange)}
+  .badge-new{position:absolute;top:-4px;right:8px;background:#f26b1d;color:#fff;font-size:10px;border-radius:8px;padding:1px 5px;font-weight:700}
+  .tile.off{opacity:.55}
+  .section-title{font-size:20px;font-weight:800;margin:18px 16px 4px}
+  .svc{display:flex;gap:12px;align-items:center;background:#fff;border-radius:14px;margin:10px 16px;padding:12px;border-left:4px solid var(--teal);box-shadow:0 2px 10px rgba(0,0,0,.04);border-top:0;border-right:0;border-bottom:0;text-align:left;width:calc(100% - 32px)}
+  .svc .thumb{width:58px;height:58px;border-radius:12px;background:var(--teal-soft);display:grid;place-items:center;flex:none}
+  .svc b{display:block;font-size:16px}
+  .svc span{color:var(--muted);font-size:13px}
+  .banner{border-radius:18px;margin:0 16px;padding:18px;background:linear-gradient(120deg,#fff 55%,#fff4d6 100%);border:1px solid #f1e4bf;position:relative;overflow:hidden}
+  .banner b{color:var(--teal-dark);font-size:17px;display:block}
+  .banner small{color:var(--muted)}
+
+  /* nav dưới */
+  .nav{position:absolute;bottom:0;left:0;right:0;height:78px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-around;padding-bottom:10px;z-index:5}
+  .nav button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--muted);position:relative;width:20%}
+  .nav button.on{color:var(--teal)}
+  .nav .fab{width:62px;height:62px;border-radius:50%;background:var(--teal);display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px #fff}
+  .nav .dot{position:absolute;top:-4px;right:22%;background:var(--red);color:#fff;font-size:11px;border-radius:10px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px}
+  .nav.hide{display:none}
+
+  /* form đặt lịch */
+  .sec{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:800;margin:20px 16px 10px}
+  .sec:before{content:"";width:5px;height:22px;background:var(--orange);border-radius:2px}
+  .sub{font-size:17px;font-weight:700;margin:16px 16px 6px}
+  .who{display:flex;gap:22px;margin:4px 16px}
+  .avatar{width:68px;height:68px;border-radius:50%;border:3px solid var(--teal-2);display:grid;place-items:center;background:#f0f2f4;position:relative}
+  .avatar .lbl{position:absolute;bottom:-8px;background:var(--teal);color:#fff;font-size:12px;border-radius:10px;padding:1px 10px}
+  .avatar .chk{position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:50%;background:var(--teal-2);color:#fff;display:grid;place-items:center;font-size:13px;border:2px solid #fff}
+  .avatar.add{border:2px solid var(--teal);background:#fff}
+  .field{display:flex;align-items:center;gap:10px;margin:0 16px;border-bottom:1px solid var(--line);padding:12px 0}
+  .field .req{color:var(--red);font-size:14px;margin-left:-6px;align-self:flex-start}
+  .field input{flex:1;border:0;font:inherit;font-size:16px;outline:none;background:transparent;color:var(--ink)}
+  .err{color:var(--red);font-size:13px;margin:4px 16px 0;display:none}
+  .err.on{display:block}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 16px}
+  .seg button{border:1px solid transparent;background:#f3f5f6;border-radius:12px;padding:12px;color:var(--teal-dark);font-weight:600}
+  .seg button.on{background:var(--teal-soft);border-color:var(--teal)}
+  .check{display:flex;gap:10px;align-items:flex-start;margin:12px 16px;color:#3a464d}
+  .check input{width:20px;height:20px;margin-top:1px}
+  .select{margin:8px 16px;background:#f3f5f6;border-radius:12px;display:flex;align-items:center;gap:8px;padding:0 12px}
+  .select select{flex:1;border:0;background:transparent;font:inherit;padding:14px 0;color:var(--ink);outline:none}
+  .chips{display:flex;gap:8px;overflow-x:auto;margin:8px 16px;padding-bottom:4px}
+  .chip{flex:none;border:1px solid transparent;background:#f3f5f6;border-radius:12px;padding:10px 14px;color:#3a464d;text-align:center;min-width:76px}
+  .chip small{display:block;color:var(--muted);font-size:12px}
+  .chip.on{background:var(--teal-soft);border-color:var(--teal);color:var(--teal-dark);font-weight:600}
+  .chip:disabled{opacity:.4;text-decoration:line-through;cursor:default}
+  .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 16px}
+  .slots .chip{min-width:0;padding:9px 4px}
+  .primary{display:block;margin:22px auto;background:var(--teal);color:#fff;border:0;border-radius:24px;padding:13px 46px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;box-shadow:0 4px 10px rgba(47,165,156,.3)}
+  .ghost{background:none;border:1px solid var(--teal);color:var(--teal);border-radius:24px;padding:10px 18px;font-weight:600}
+  .hint{margin:6px 16px;color:var(--muted);font-size:13px}
+  .restore{margin:12px 16px 0;background:var(--warn-soft);border:1px solid #f3dfb2;border-radius:12px;padding:10px 12px;font-size:14px}
+  .link{background:none;border:0;color:var(--teal);padding:0;text-decoration:underline;font-size:14px}
+
+  /* lịch hẹn */
+  .empty{text-align:center;color:var(--muted)}
+  .appt{display:flex;gap:14px}
+  .appt .date{flex:none;width:64px;border-radius:14px;background:var(--teal-soft);color:var(--teal-dark);text-align:center;padding:8px 0;font-weight:800;font-size:22px;line-height:1.1}
+  .appt .date small{display:block;font-size:12px;font-weight:600}
+  .tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--teal-soft);color:var(--teal-dark);font-weight:600}
+  .tag.orange{background:#fff1dc;color:#b86e00}
+  .muted{color:var(--muted);font-size:14px}
+  .checkin{width:100%;margin-top:12px;background:var(--teal);color:#fff;border:0;border-radius:14px;padding:12px;font-weight:700}
+
+  /* hôm nay tại viện */
+  .big{font-size:38px;font-weight:800;color:var(--teal-dark);line-height:1.1}
+  .eta{font-size:19px;margin-top:2px}
+  .why{margin-top:10px;background:#f6f8f9;border-radius:12px;padding:10px 12px;font-size:13.5px;color:#4a575f}
+  .switch{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .switch input{width:22px;height:22px;accent-color:var(--teal)}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .answer{margin-top:10px;border-radius:12px;padding:10px 12px;font-size:15px;display:none}
+  .answer.ok{display:block;background:var(--ok-soft)}
+  .answer.no{display:block;background:var(--bad-soft)}
+  .steps{list-style:none;margin:0;padding:0}
+  .steps li{display:flex;gap:12px;padding:7px 0}
+  .steps .n{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;border:2px solid var(--line);color:var(--muted);background:#fff}
+  .steps .done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+  .steps .current .n{background:var(--teal);border-color:var(--teal);color:#fff}
+  .steps .current b{color:var(--teal-dark)}
+  .note{background:var(--warn-soft)}
+  .emerg{background:var(--bad-soft);border:1px solid #f5bcbc;display:none}
+  .danger{background:var(--red);color:#fff;border:0;border-radius:14px;padding:12px;font-weight:700;width:100%}
+  .chatfab{position:absolute;right:18px;bottom:92px;background:var(--teal);color:#fff;border:0;border-radius:28px;padding:12px 18px;font-weight:700;box-shadow:0 6px 16px rgba(33,133,126,.35);display:none;z-index:6;align-items:center;gap:8px}
+
+  /* chat */
+  #chatlog{flex:1;padding:14px 14px 4px;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:84%;padding:10px 13px;border-radius:16px;white-space:pre-wrap;font-size:15.5px}
+  .me{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:4px}
+  .bot{align-self:flex-start;background:#fff;border-bottom-left-radius:4px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+  .bot.sys{background:var(--bad-soft);border:1px solid #f5bcbc}
+  .src{display:block;margin-top:6px;font-size:11.5px;color:var(--muted)}
+  .msg.stale{opacity:.5}
+  .msg.stale .src:after{content:" · ĐÃ CŨ – xem trạng thái hiện tại ở trên";color:var(--red);font-weight:700}
+  .livebar{position:sticky;top:0;z-index:3;background:#fff;border-bottom:1px solid var(--line);padding:9px 14px;font-size:14px;display:none}
+  .livebar b{color:var(--teal-dark)}
+  .qchips{display:flex;gap:6px;flex-wrap:wrap;padding:6px 14px}
+  .qchips button{border:1px solid var(--teal);background:#fff;color:var(--teal-dark);border-radius:999px;padding:6px 11px;font-size:13px}
+  .composer{display:flex;gap:8px;padding:10px 12px;background:#fff;border-top:1px solid var(--line);flex:none}
+  .composer input{flex:1;font:inherit;padding:11px 14px;border:1px solid var(--line);border-radius:22px;outline:none}
+  .composer button{background:var(--teal);color:#fff;border:0;border-radius:22px;padding:0 18px;font-weight:700}
+
+  .toast{position:absolute;left:12px;right:12px;top:12px;background:#1f2a30;color:#fff;padding:13px 15px;border-radius:16px;display:none;z-index:20;box-shadow:0 10px 24px rgba(0,0,0,.25);font-size:15px}
+  .demo-flag{flex:none;background:#1f2a30;color:#fff;font-size:10.5px;text-align:center;padding:3px 0;letter-spacing:.3px}
+
+  /* bảng điều khiển demo */
+  .side{width:100%;max-width:360px;font-size:14.5px}
+  .side .card{margin:0 0 14px}
+  .side h3{margin:0 0 6px;font-size:16px}
+  .side input,.side select{width:100%;font:inherit;font-size:14px;padding:8px;border:1px solid var(--line);border-radius:10px;margin:4px 0 8px}
+  .side .row button{flex:1}
+  .mtick{display:none}
+  @media (max-width:520px){
+    .wrap{padding:0;gap:16px}
+    .phone{max-width:none;height:100vh;height:100dvh;border-radius:0;box-shadow:none}
+    .side{padding:0 12px 24px}
+    .mtick{display:block;position:fixed;right:10px;top:40px;z-index:30;background:rgba(31,42,48,.8);color:#fff;border:0;border-radius:18px;padding:6px 12px;font-size:13px}
+  }
+  .pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--teal-soft);color:var(--teal-dark);font-weight:700}
+</style>
+</head>
+<body>
+<button class="mtick" onclick="tick(5)" title="Demo: tua 5 phút">⏩ +5'</button>
+<div class="wrap">
+<div class="phone" id="phone">
+  <div class="demo-flag">BẢN MÔ PHỎNG · không phải app chính thức</div>
+  <div class="toast" id="toast"></div>
+
+  <!-- ================= TRANG CHỦ ================= -->
+  <section class="screen on" id="s-home">
+    <div class="hero" style="padding-bottom:40px">
+      <svg class="leaf" style="left:-20px;bottom:-30px" width="120" height="120" viewBox="0 0 100 100"><path d="M10 90 C10 40 40 10 90 10 C90 60 60 90 10 90Z" fill="#fff"/></svg>
+      <h1 style="margin-top:18px">MyVinmec</h1>
+      <p>Chăm sóc bằng tài năng, y đức và sự thấu cảm</p>
+      <div class="actions"><span class="circle" style="margin-top:18px" data-ic="ticket"></span><span class="circle" style="margin-top:18px" data-ic="search"></span></div>
+    </div>
+    <div class="banner pull">
+      <span class="tag orange">MỚI · bản thử</span>
+      <b style="margin-top:6px">Theo dõi lượt khám ngay trên điện thoại</b>
+      <small>Biết còn khoảng bao lâu đến lượt, được báo trước khi tới lượt, biết bước tiếp theo đi đâu.</small>
+      <div style="margin-top:10px"><button class="ghost" data-go="today">Xem thử</button></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="grid" id="grid"></div>
+    </div>
+    <div class="section-title">Dịch vụ mới</div>
+    <button class="svc" data-go="booking"><span class="thumb" data-ic="calendar"></span><div><b>Đặt lịch nhanh – Xác nhận lịch tự động</b><span>Chọn chuyên khoa, bác sĩ, giờ khám mong muốn</span></div></button>
+    <button class="svc" data-go="today"><span class="thumb" data-ic="clock"></span><div><b>Hôm nay tại viện</b><span>Theo dõi lượt chờ và hỏi trợ lý trong ngày khám</span></div></button>
+  </section>
+
+  <!-- ================= ĐẶT LỊCH HẸN ================= -->
+  <section class="screen nonav" id="s-booking">
+    <div class="plain-head"><button data-back data-ic="back"></button><h2>Đặt lịch hẹn</h2></div>
+    <div style="overflow-y:auto;flex:1">
+      <div class="restore" id="restoreNote" style="display:none">↺ Đã khôi phục thông tin anh/chị nhập dở lần trước. <button class="link" id="clearDraft">Xoá</button></div>
+      <div class="sec">Chọn Khách hàng</div>
+      <div class="who">
+        <div style="text-align:center"><div class="avatar"><span data-ic="user"></span><span class="chk">✓</span><span class="lbl">Tôi</span></div></div>
+        <div style="text-align:center"><div class="avatar add" onclick="toast('Thêm người thân: ngoài phạm vi bản prototype')"><span data-ic="plus"></span></div><div style="margin-top:8px">Thêm</div></div>
+      </div>
+      <div class="sub">Thông tin người đặt lịch</div>
+      <div class="hint">Bản demo: hãy dùng <b>thông tin giả</b>. Dữ liệu chỉ nằm trong trình duyệt này. <button class="link" id="fillDemo">Điền dữ liệu mẫu</button></div>
+      <div class="field"><span data-ic="pen"></span><span class="req">*</span><input id="f-name" placeholder="Họ và tên"></div><div class="err" id="e-name">Vui lòng nhập họ và tên</div>
+      <div class="field"><span data-ic="cake"></span><span class="req">*</span><input id="f-dob" placeholder="Ngày sinh (dd/mm/yyyy)" inputmode="numeric"></div><div class="err" id="e-dob">Ngày sinh dạng dd/mm/yyyy</div>
+      <div class="field"><span data-ic="phone"></span><span class="req">*</span><input id="f-phone" placeholder="Số điện thoại" inputmode="tel"></div><div class="err" id="e-phone">Số điện thoại gồm 10 chữ số, bắt đầu bằng 0</div>
+      <div class="sub" style="font-size:16px">Giới tính <span style="color:var(--red)">*</span></div>
+      <div class="seg" id="f-gender"><button data-v="nam">♂ Nam</button><button data-v="nu">♀ Nữ</button></div><div class="err" id="e-gender">Vui lòng chọn giới tính</div>
+      <label class="check"><input type="checkbox" id="f-cbnv"> Đặt theo quyền lợi CBNV Vingroup và người thân CBNV.</label>
+      <label class="check"><input type="checkbox" id="f-foreign"> Đặt hẹn cho người nước ngoài</label>
+
+      <div class="sec">Thông tin đặt hẹn</div>
+      <div class="select"><span data-ic="building"></span><span style="color:var(--red)">*</span><select id="f-place"><option value="">Chọn địa điểm</option></select></div><div class="err" id="e-place">Vui lòng chọn địa điểm</div>
+      <div class="select"><span data-ic="steth"></span><span style="color:var(--red)">*</span><select id="f-spec"><option value="">Chọn chuyên khoa</option></select></div><div class="err" id="e-spec">Vui lòng chọn chuyên khoa</div>
+      <div class="hint">Chưa biết khám khoa nào? Chọn <b>Nội tổng quát</b>, bác sĩ sẽ hướng dẫn chuyển khoa nếu cần <i>(quy trình giả định)</i>.</div>
+      <div class="select"><span data-ic="doctor"></span><select id="f-doc"><option value="">Bác sĩ bất kỳ (sớm nhất)</option></select></div>
+      <div class="sub" style="font-size:16px">Loại lượt khám <span style="color:var(--red)">*</span></div>
+      <div class="seg" id="f-type"><button data-v="kham_moi">Khám lần đầu</button><button data-v="tai_kham">Tái khám</button></div><div class="err" id="e-type">Vui lòng chọn loại lượt</div>
+      <div class="hint">Thông tin này giúp viện ước tính thời gian chờ chính xác hơn. Không cần ghi lý do khám hay triệu chứng.</div>
+
+      <div class="sec">Lịch hẹn</div>
+      <div class="sub" style="font-size:16px">Ngày khám mong muốn <span style="color:var(--red)">*</span></div>
+      <div class="chips" id="f-date"></div><div class="err" id="e-date">Vui lòng chọn ngày</div>
+      <div class="sub" style="font-size:16px">Giờ khám <span style="color:var(--red)">*</span></div>
+      <div class="slots" id="f-time"></div><div class="err" id="e-time">Vui lòng chọn giờ</div>
+      <button class="primary" id="submitBooking">Đặt hẹn</button>
+      <div style="height:20px"></div>
+    </div>
+  </section>
+
+  <!-- ================= ĐẶT THÀNH CÔNG ================= -->
+  <section class="screen nonav" id="s-success">
+    <div class="hero" style="text-align:center;padding:40px 20px 50px">
+      <div style="font-size:54px">✓</div><h1>Đặt hẹn thành công</h1><p>Lịch đã được xác nhận tự động</p>
+    </div>
+    <div class="card pull" id="successCard"></div>
+    <div class="card note" style="font-size:14px">🔔 Viện sẽ nhắc anh/chị <b>1 ngày trước</b> và <b>sáng ngày khám</b>. Khi đến viện, mở mục <b>Lịch hẹn</b> và bấm <b>Check-in</b> để theo dõi lượt chờ.</div>
+    <div class="row" style="margin:10px 16px;justify-content:center">
+      <button class="ghost" data-go="appts">Xem lịch hẹn</button><button class="ghost" data-go="home">Về trang chủ</button>
+    </div>
+  </section>
+
+  <!-- ================= LỊCH HẸN ================= -->
+  <section class="screen" id="s-appts">
+    <div class="hero" style="padding-bottom:36px">
+      <div class="backbar"><button data-go="home" data-ic="backw"></button><h1>Lịch hẹn</h1></div>
+      <div class="actions"><button class="circle" data-go="booking" data-ic="plus"></button></div>
+    </div>
+    <div id="apptList"></div>
+  </section>
+
+  <!-- ================= HÔM NAY TẠI VIỆN ================= -->
+  <section class="screen" id="s-today">
+    <div class="hero" style="padding-bottom:34px">
+      <div class="backbar"><button data-go="home" data-ic="backw"></button><h1 style="font-size:23px">Hôm nay tại viện</h1></div>
+      <p id="todaySub" style="margin-left:36px"></p>
+    </div>
+    <div id="todayEmpty" class="card pull empty" style="display:none">
+      <div style="font-size:44px">🗓️</div>
+      <p>Anh/chị chưa check-in lịch hẹn nào hôm nay.</p>
+      <button class="primary" style="margin:10px auto" data-go="appts">Mở lịch hẹn</button>
+    </div>
+    <div id="todayBody">
+      <div class="card pull emerg" id="emerg">
+        <b style="color:#b42318">⚠️ Cần hỗ trợ y tế ngay</b>
+        <p style="margin:6px 0 10px">Anh/chị hãy báo ngay <b>nhân viên y tế gần nhất</b> hoặc bấm nút dưới đây, đừng chờ đến lượt. Nếu đang ở ngoài viện, hãy gọi <b>115</b>.</p>
+        <button class="danger" id="callNurse">🔔 Gọi điều dưỡng ngay</button>
+        <p class="muted" id="nurseCalled" style="display:none;margin:8px 0 0">Đã gửi tín hiệu tới điều dưỡng khu vực (mô phỏng). Hãy ở yên tại chỗ.</p>
+      </div>
+      <div class="card pull" id="nowCard">
+        <div class="muted" id="nowLabel"></div>
+        <div style="font-size:19px;font-weight:700" id="nowStation"></div>
+        <div class="muted" id="nowPlace"></div>
+        <div class="big" style="margin-top:10px" id="nowBig"></div>
+        <div class="eta" id="nowEta"></div>
+        <div class="why" id="nowWhy"></div>
+        <div class="muted" style="margin-top:8px;font-size:12.5px" id="nowUpdated"></div>
+        <div class="muted" style="font-size:12.5px" id="nowLive"></div>
+      </div>
+      <div class="card" style="border:1.5px solid var(--teal)">
+        <div style="display:flex;align-items:center;gap:10px"><span class="circle" style="width:36px;height:36px;background:var(--teal-soft)" data-ic="bot"></span>
+          <div><b>Hỏi trợ lý chờ khám</b><div class="muted" style="font-size:13px">Hỏi bằng lời của anh/chị: lượt chờ, rời chỗ, đi đâu tiếp</div></div></div>
+        <div class="qchips" id="todayChips" style="padding:8px 0"></div>
+        <div style="display:flex;gap:8px"><input id="tq" placeholder="Ví dụ: đưa mẹ đi vệ sinh 20 phút có kịp không?" autocomplete="off" style="flex:1;font:inherit;font-size:14.5px;padding:10px 12px;border:1px solid var(--line);border-radius:20px;outline:none">
+          <button id="tsend" style="background:var(--teal);color:#fff;border:0;border-radius:20px;padding:0 16px;font-weight:700">Hỏi</button></div>
+      </div>
+      <div class="card">
+        <div class="switch"><span>🔔 Báo tôi khi <b>còn 2 người</b> trước tôi</span><input type="checkbox" id="notifyToggle" checked></div>
+      </div>
+      <div class="card">
+        <div style="margin-bottom:8px">🚶 Tôi muốn rời chỗ một lúc (vệ sinh, ăn uống…)</div>
+        <div class="row"><button class="ghost" data-leave="10">10 phút</button><button class="ghost" data-leave="20">20 phút</button><button class="ghost" data-leave="30">30 phút</button></div>
+        <div class="answer" id="leaveAns"></div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:4px">Các bước hôm nay</div>
+        <ul class="steps" id="steps"></ul>
+      </div>
+      <div class="card" style="text-align:center">
+        <button class="ghost" style="border-color:var(--red);color:var(--red)" id="feelBad">Tôi thấy không khoẻ</button>
+      </div>
+      <div class="card note" style="font-size:13.5px"><b>Ước tính, không phải lời hứa.</b> Khi bảng hoặc loa gọi số của anh/chị, đó là chuẩn. Dùng app hay không cũng <b>không</b> thay đổi thứ tự.</div>
+    </div>
+  </section>
+
+  <!-- ================= THÔNG BÁO ================= -->
+  <section class="screen" id="s-notifs">
+    <div class="hero" style="padding-bottom:30px"><div class="backbar"><button data-go="home" data-ic="backw"></button><h1>Thông báo</h1></div></div>
+    <div id="notifList"></div>
+  </section>
+
+  <!-- ================= TRỢ LÝ ================= -->
+  <section class="screen nonav" id="s-chat">
+    <div class="hero" style="padding:16px 18px">
+      <div class="backbar"><button data-go="today" data-ic="backw"></button>
+        <span class="circle" style="width:38px;height:38px" data-ic="bot"></span>
+        <div><div style="font-weight:800;font-size:18px">Trợ lý chờ khám</div><div style="font-size:12.5px;opacity:.95" id="botMode">Chỉ hỗ trợ lượt chờ · vị trí · bước tiếp theo</div></div>
+      </div>
+    </div>
+    <div class="livebar" id="chatStatus"></div>
+    <div id="chatlog"></div>
+    <div class="qchips" id="qchips"></div>
+    <div class="composer"><input id="q" placeholder="Ví dụ: tôi đi ăn sáng 20 phút có kịp không?" autocomplete="off"><button id="send">Gửi</button></div>
+  </section>
+
+  <button class="chatfab" id="chatfab" data-go="chat"><span data-ic="botw"></span> Hỏi trợ lý</button>
+
+  <!-- ================= NAV DƯỚI ================= -->
+  <nav class="nav" id="nav">
+    <button data-go="home" data-nav="home"><span data-ic="homeNav"></span>Trang chủ</button>
+    <button class="off" data-off="Hồ sơ"><span data-ic="profile"></span>Hồ sơ</button>
+    <button data-go="booking" data-nav="booking"><span class="fab" data-ic="calendarW"></span>Đặt lịch</button>
+    <button data-go="notifs" data-nav="notifs"><span data-ic="bell"></span><span class="dot" id="notifDot" style="display:none">0</span>Thông báo</button>
+    <button class="off" data-off="Tài khoản"><span data-ic="user"></span>Tài khoản</button>
+  </nav>
+</div>
+
+<!-- ================= BẢNG ĐIỀU KHIỂN DEMO ================= -->
+<aside class="side">
+  <div class="card">
+    <h3>Điều khiển demo</h3>
+    <div class="muted">Mô phỏng hệ thống xếp hàng của viện. Người bệnh thật không thấy phần này.</div>
+    <label class="muted" style="display:block;margin-top:8px">Kịch bản khi check-in
+      <select id="scenario">
+        <option value="busy">Sáng đông · bác sĩ hôm nay chậm hơn thường lệ</option>
+        <option value="calm">Chiều vắng · 2 người trước</option>
+        <option value="delay">Bác sĩ tạm vắng 15 phút (xử lý ca khẩn)</option>
+      </select></label>
+    <label class="muted" style="display:block">Tốc độ đồng hồ
+      <select id="speed">
+        <option value="1">Thời gian thật (×1)</option>
+        <option value="10">Nhanh ×10 (1 phút ≈ 6 giây)</option>
+        <option value="60">Rất nhanh ×60 (1 phút ≈ 1 giây)</option>
+        <option value="0">Tạm dừng</option>
+      </select></label>
+    <div class="row"><button class="ghost" id="tick5">⏩ +5 phút</button><button class="ghost" id="tick15">⏩ +15 phút</button></div>
+    <div class="row" style="margin-top:8px"><button class="ghost" id="quickAppt">⚡ Tạo nhanh lịch hôm nay</button></div>
+    <div class="row" style="margin-top:8px"><button class="ghost" id="resetAll">↺ Xoá toàn bộ</button></div>
+  </div>
+  <div class="card">
+    <h3>Trợ lý <span class="pill" id="modeTag">Không AI</span></h3>
+    <div class="muted">Không có key: trả lời theo luật cố định. Có key: gọi model bên dưới. Key chỉ nằm trong tab này. <b>Chỉ dùng cho demo</b>; bản thật gọi qua máy chủ của viện.</div>
+    <select id="provider">
+      <option value="openai">OpenAI</option>
+      <option value="anthropic">Anthropic (Claude)</option>
+    </select>
+    <input id="model" placeholder="Tên model">
+    <input type="password" id="apiKey" placeholder="API key (tuỳ chọn)">
+    <button class="ghost" id="saveKey">Dùng key này</button>
+  </div>
+  <div class="card">
+    <h3>Log phiên thử</h3>
+    <div class="muted">Ghi thao tác và câu hỏi (không có thông tin cá nhân, không ghi form đặt lịch).</div>
+    <input id="tester" placeholder="Mã người thử, ví dụ T1">
+    <button class="ghost" id="exportLog">⬇ Xuất log JSON</button>
+    <div class="muted" id="logCount" style="margin-top:6px">0 sự kiện</div>
+  </div>
+</aside>
+</div>
+
+<script src="wait-model.js"></script>
+<script>
+/* =====================================================================
+   0. ICON (SVG nét, màu teal)
+   ===================================================================== */
+const P = {
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2"/>',
+  phone:'<path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  clock:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/>',
+  syringe:'<path d="M18 2l4 4M15 5l4 4M17 7L8 16l-3 1 1-3 9-9M5 19l-3 3"/>',
+  pill:'<rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-35 12 12)"/><path d="M9 7l6 9"/>',
+  price:'<rect x="4" y="3" width="14" height="18" rx="2"/><path d="M8 8h6M8 12h6M8 16h3"/>',
+  star:'<circle cx="12" cy="9" r="6"/><path d="M12 6l1 2 2 .3-1.5 1.4.4 2.1L12 10.8 10.1 11.8l.4-2.1L9 8.3 11 8z"/><path d="M8 14l-2 7 6-3 6 3-2-7"/>',
+  chat:'<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/>',
+  mother:'<circle cx="9" cy="7" r="3"/><circle cx="16" cy="11" r="2"/><path d="M4 21v-3a5 5 0 0 1 10 0v3M13 21v-2a3 3 0 0 1 6 0v2"/>',
+  alarm:'<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/><circle cx="17" cy="17" r="3" fill="#2fa59c"/>',
+  money:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 9v.01M18 15v.01"/>',
+  gridI:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+  homeNav:'<rect x="3" y="3" width="8" height="8" rx="2" fill="currentColor"/><rect x="13" y="3" width="8" height="8" rx="2" fill="currentColor" opacity=".5"/><rect x="3" y="13" width="8" height="8" rx="2" fill="currentColor"/><rect x="13" y="13" width="8" height="8" rx="2" fill="currentColor"/>',
+  profile:'<rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="9" cy="11" r="2.5"/><path d="M5.5 17a3.5 3.5 0 0 1 7 0M14 10h4M14 14h4"/>',
+  bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  back:'<path d="M15 5l-7 7 7 7M8 12h13"/>', backw:'<path d="M15 5l-7 7 7 7M8 12h13"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', search:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
+  ticket:'<path d="M3 8a2 2 0 0 0 0 4v0a2 2 0 0 1 0 4v2h18v-2a2 2 0 0 1 0-4 2 2 0 0 1 0-4V6H3z"/><path d="M9 6v12"/>',
+  pen:'<path d="M4 20l4-1 11-11-3-3L5 16z"/>', cake:'<path d="M4 20h16v-6H4zM12 4v4M8 14v-2h8v2"/>',
+  building:'<rect x="4" y="3" width="10" height="18"/><rect x="14" y="9" width="6" height="12"/><path d="M7 7h1M10 7h1M7 11h1M10 11h1M7 15h1M10 15h1"/>',
+  steth:'<path d="M6 3v6a4 4 0 0 0 8 0V3M10 13v3a4 4 0 0 0 8 0v-2"/><circle cx="18" cy="12" r="2"/>',
+  doctor:'<circle cx="12" cy="7" r="4"/><path d="M4 21a8 8 0 0 1 16 0M12 15v4M10 17h4"/>',
+  bot:'<rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4M9 13v.01M15 13v.01M10 16h4"/>',
+  botw:'<rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4M9 13v.01M15 13v.01M10 16h4"/>',
+  calendarW:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M8 14h2M12 14h2M8 17h2"/>'
+};
+const WHITE = new Set(["backw","calendarW","botw"]);
+function icon(name,size){
+  const s = size || (name==="calendarW"?30:(["homeNav","profile","bell","user"].includes(name)?26:24));
+  const col = WHITE.has(name)?"#fff":"#2fa59c";
+  return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${col}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:${col}">${P[name]||""}</svg>`;
+}
+function paintIcons(root=document){ root.querySelectorAll("[data-ic]").forEach(e=>{ if(!e.dataset.painted){ e.insertAdjacentHTML("afterbegin",icon(e.dataset.ic, e.classList.contains("circle")?22:null)); e.dataset.painted=1; } }); }
+
+/* =====================================================================
+   1. TIỆN ÍCH CHUNG
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const WM = window.WaitModel;
+const rng = WM.mulberry32((Date.now() % 1e9) | 0);
+const pad = n => String(n).padStart(2,"0");
+const hhmm = d => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const dmy = d => `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+const sameDay = (a,b) => a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+const WD = ["CN","T2","T3","T4","T5","T6","T7"];
+const store = { get(k){ try{ return JSON.parse(sessionStorage.getItem(k)); }catch(e){ return null; } },
+                set(k,v){ try{ sessionStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
+                del(k){ try{ sessionStorage.removeItem(k); }catch(e){} } };
+function toast(html){ const t=$("toast"); t.innerHTML=html; t.style.display="block"; if(navigator.vibrate) navigator.vibrate(250);
+  clearTimeout(toast.h); toast.h=setTimeout(()=>t.style.display="none",4500); }
+
+/* =====================================================================
+   2. DỮ LIỆU GIẢ LẬP (danh mục)
+   ===================================================================== */
+const PLACES = ["Cơ sở A – Hà Nội (giả lập)","Cơ sở B – TP.HCM (giả lập)"];
+const SPECS = [
+  {id:"noi", name:"Nội tổng quát", room:"Phòng 305, tầng 3", docs:["BS. An (giả lập)","BS. Bình (giả lập)"]},
+  {id:"tim", name:"Tim mạch", room:"Phòng 402, tầng 4", docs:["BS. Chi (giả lập)"]},
+  {id:"tieuhoa", name:"Tiêu hoá", room:"Phòng 308, tầng 3", docs:["BS. Dũng (giả lập)","BS. Hà (giả lập)"]},
+  {id:"tmh", name:"Tai Mũi Họng", room:"Phòng 215, tầng 2", docs:["BS. Khoa (giả lập)"]},
+  {id:"nhi", name:"Nhi", room:"Phòng 201, tầng 2", docs:["BS. Lan (giả lập)"]}
+];
+const FACILITIES = {
+  "nhà vệ sinh":"cuối hành lang mỗi tầng, khoảng 2 phút đi bộ",
+  "căng tin":"tầng 1, sảnh B, khoảng 5 phút đi bộ",
+  "quầy thu ngân":"tầng 1, sảnh A",
+  "nước uống":"máy nước ở mỗi khu chờ",
+  "ghế chờ":"khu chờ tầng 3 còn ghế ở dãy phía cửa sổ"
+};
+
+/* =====================================================================
+   3. TRẠNG THÁI ỨNG DỤNG + ĐIỀU HƯỚNG
+   ===================================================================== */
+const app = { appts: store.get("appts") || [], notifs: [], unread:0, sim:null, history:[] };
+let screenStack = ["home"];
+function go(name){
+  if(name==="today" && !app.sim){ /* chưa check-in */ }
+  document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on", s.id==="s-"+name));
+  const navless = ["booking","success","chat"].includes(name);
+  $("nav").classList.toggle("hide", navless);
+  document.querySelectorAll("[data-nav]").forEach(b=>b.classList.toggle("on", b.dataset.nav===name));
+  $("chatfab").style.display = (name==="today" && app.sim) ? "flex" : "none";
+  if(name==="booking") openBooking();
+  if(name==="appts") renderAppts();
+  if(name==="today") renderToday();
+  if(name==="notifs"){ app.unread=0; renderNotifs(); }
+  if(name==="chat") openChat();
+  screenStack.push(name); log("screen",{name});
+  renderBadge();
+}
+document.addEventListener("click", e=>{
+  const g=e.target.closest("[data-go]"); if(g){ go(g.dataset.go); return; }
+  const b=e.target.closest("[data-back]"); if(b){ screenStack.pop(); go(screenStack.pop()||"home"); return; }
+  const o=e.target.closest("[data-off]"); if(o){ toast(`<b>${o.dataset.off}</b>: ngoài phạm vi bản prototype`); }
+});
+
+/* Trang chủ: lưới dịch vụ (chỉ Lịch hẹn + Hôm nay tại viện hoạt động) */
+const TILES = [
+  ["calendar","Lịch hẹn","appts"],["phone","Liên hệ"],["clock","Hôm nay tại viện","today","new"],["syringe","Sổ tiêm"],
+  ["pill","Đơn thuốc"],["price","Danh mục giá & quyền lợi"],["star","Quyền lợi CBNV Vingroup"],["chat","Cộng đồng hỏi đáp bác sĩ"],
+  ["mother","Cẩm nang làm mẹ"],["alarm","Nhắc lịch uống thuốc"],["money","Tạm ứng viện phí"],["gridI","Tất cả dịch vụ"]
+];
+$("grid").innerHTML = TILES.map(([ic,label,go,isNew])=>
+  `<button class="tile ${go?"":"off"}" ${go?`data-go="${go}"`:`data-off="${label}"`}>
+     <span class="ic ${isNew?"new":""}">${icon(ic,30)}</span>${isNew?'<span class="badge-new">Mới</span>':""}<span>${label}</span></button>`).join("");
+
+/* =====================================================================
+   4. ĐẶT LỊCH HẸN
+   ===================================================================== */
+const form = { gender:null, type:null, date:null, time:null };
+const FIELDS = ["f-name","f-dob","f-phone","f-place","f-spec","f-doc"];
+$("f-place").innerHTML += PLACES.map(p=>`<option>${p}</option>`).join("");
+$("f-spec").innerHTML += SPECS.map(s=>`<option value="${s.id}">${s.name}</option>`).join("");
+$("f-spec").onchange = ()=>{ fillDocs(); saveDraft(); };
+function fillDocs(){
+  const sp = SPECS.find(s=>s.id===$("f-spec").value);
+  $("f-doc").innerHTML = `<option value="">Bác sĩ bất kỳ (sớm nhất)</option>` + (sp? sp.docs.map(d=>`<option>${d}</option>`).join("") : "");
+}
+function segBind(id,key){ $(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{ form[key]=b.dataset.v; segPaint(id,key); saveDraft(); }); }
+function segPaint(id,key){ $(id).querySelectorAll("button").forEach(b=>b.classList.toggle("on", b.dataset.v===form[key])); }
+segBind("f-gender","gender"); segBind("f-type","type");
+
+function renderDates(){
+  const today=new Date(); let h="";
+  for(let i=0;i<7;i++){ const d=new Date(today); d.setDate(d.getDate()+i);
+    const key=d.toDateString(), lab = i===0?"Hôm nay":i===1?"Ngày mai":WD[d.getDay()];
+    h+=`<button class="chip ${form.date===key?"on":""}" data-d="${key}">${lab}<small>${pad(d.getDate())}/${pad(d.getMonth()+1)}</small></button>`; }
+  $("f-date").innerHTML=h;
+  $("f-date").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{ form.date=c.dataset.d; form.time=null; renderDates(); renderSlots(); saveDraft(); });
+}
+function renderSlots(){
+  const slots=[]; for(let m=7*60+30;m<=16*60+30;m+=30){ if(m>=12*60 && m<13*60+30) continue; slots.push(`${pad(Math.floor(m/60))}:${pad(m%60)}`); }
+  const now=new Date(), isToday = form.date===now.toDateString();
+  $("f-time").innerHTML = slots.map((s,i)=>{
+    const [h,mm]=s.split(":").map(Number), past = isToday && (h*60+mm) < now.getHours()*60+now.getMinutes()+30;
+    const full = !isToday && ((i*7 + (form.date||"").length) % 5===0);          // giả lập vài khung đã hết chỗ
+    return `<button class="chip ${form.time===s?"on":""}" data-t="${s}" ${past||full||!form.date?"disabled":""}>${s}${full?"<small>Hết chỗ</small>":""}</button>`;
+  }).join("");
+  $("f-time").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{ form.time=c.dataset.t; renderSlots(); saveDraft(); });
+}
+/* Insight P2: "điền đầy đủ gửi đi thì lại mất thông tin vừa khai" → tự lưu bản nháp */
+function saveDraft(){ const d={...form}; FIELDS.forEach(f=>d[f]=$(f).value); d.cbnv=$("f-cbnv").checked; d.foreign=$("f-foreign").checked; store.set("draft",d); }
+function loadDraft(){
+  const d=store.get("draft"); if(!d) return false;
+  Object.assign(form,{gender:d.gender,type:d.type,date:d.date,time:d.time});
+  $("f-place").value=d["f-place"]||""; $("f-spec").value=d["f-spec"]||""; fillDocs();
+  FIELDS.forEach(f=>{ if(d[f]!=null) $(f).value=d[f]; }); $("f-cbnv").checked=!!d.cbnv; $("f-foreign").checked=!!d.foreign;
+  return FIELDS.some(f=>d[f]) || d.gender || d.date;
+}
+FIELDS.forEach(f=>$(f).addEventListener("input",saveDraft)); $("f-place").onchange=saveDraft;
+["f-cbnv","f-foreign"].forEach(f=>$(f).onchange=saveDraft);
+$("clearDraft").onclick=()=>{ store.del("draft"); resetForm(); $("restoreNote").style.display="none"; };
+function resetForm(){ Object.assign(form,{gender:null,type:null,date:null,time:null}); FIELDS.forEach(f=>$(f).value=""); $("f-cbnv").checked=$("f-foreign").checked=false; fillDocs(); segPaint("f-gender","gender"); segPaint("f-type","type"); renderDates(); renderSlots(); }
+function openBooking(){
+  const restored = loadDraft();
+  $("restoreNote").style.display = restored ? "block":"none";
+  segPaint("f-gender","gender"); segPaint("f-type","type"); renderDates(); renderSlots();
+  document.querySelectorAll(".err").forEach(e=>e.classList.remove("on"));
+}
+$("fillDemo").onclick=()=>{
+  $("f-name").value="Nguyễn Văn Mẫu"; $("f-dob").value="12/05/1970"; $("f-phone").value="0900000000";
+  form.gender="nam"; form.type="tai_kham"; $("f-place").value=PLACES[0]; $("f-spec").value="noi"; fillDocs(); $("f-doc").value=SPECS[0].docs[0];
+  form.date=new Date().toDateString(); form.time=null; segPaint("f-gender","gender"); segPaint("f-type","type"); renderDates(); renderSlots();
+  let first=$("f-time").querySelector(".chip:not([disabled])");
+  if(!first){ const d=new Date(); d.setDate(d.getDate()+1); form.date=d.toDateString(); renderDates(); renderSlots(); first=$("f-time").querySelector(".chip:not([disabled])"); } // hôm nay đã hết giờ khám
+  if(first){ form.time=first.dataset.t; renderSlots(); }
+  saveDraft(); log("fill_demo");
+};
+$("submitBooking").onclick=()=>{
+  const v = {
+    name: $("f-name").value.trim().length>=2,
+    dob: /^\d{2}\/\d{2}\/\d{4}$/.test($("f-dob").value.trim()),
+    phone: /^0\d{9}$/.test($("f-phone").value.replace(/\s/g,"")),
+    gender: !!form.gender, place: !!$("f-place").value, spec: !!$("f-spec").value,
+    type: !!form.type, date: !!form.date, time: !!form.time
+  };
+  let firstErr=null;
+  for(const [k,ok] of Object.entries(v)){ $("e-"+k).classList.toggle("on",!ok); if(!ok && !firstErr) firstErr=$("e-"+k); }
+  if(firstErr){ firstErr.scrollIntoView({block:"center",behavior:"smooth"}); log("booking_invalid",{missing:Object.keys(v).filter(k=>!v[k])}); return; }
+  const sp=SPECS.find(s=>s.id===$("f-spec").value);
+  const appt = { id:"H"+Date.now().toString().slice(-6), date:form.date, time:form.time, place:$("f-place").value,
+    spec:sp.name, specId:sp.id, room:sp.room, doc:$("f-doc").value || sp.docs[0]+" · bác sĩ sớm nhất", type:form.type, status:"booked" };
+  app.appts.push(appt); store.set("appts",app.appts); store.del("draft"); resetForm();
+  pushNotif(`✅ Đặt hẹn thành công: ${appt.spec}, ${appt.time} ngày ${dmy(new Date(appt.date))}.`, false);
+  $("successCard").innerHTML = apptHtml(appt,false);
+  log("booking_ok",{spec:appt.specId,type:appt.type,today:sameDay(new Date(appt.date),new Date())});
+  go("success");
+};
+
+/* =====================================================================
+   5. LỊCH HẸN + CHECK-IN
+   ===================================================================== */
+function apptHtml(a, withActions=true){
+  const d=new Date(a.date), today=sameDay(d,new Date());
+  let act="";
+  if(withActions){
+    if(a.status==="checked") act=`<button class="checkin" data-go="today">Đang ở viện · xem lượt chờ</button>`;
+    else if(today) act=`<button class="checkin" data-checkin="${a.id}">Tôi đã đến viện · Check-in</button><div class="muted" style="margin-top:6px;font-size:12.5px">Bản thật: check-in bằng mã QR ở kiosk hoặc khi đến khu vực bệnh viện.</div>`;
+    else act=`<div class="muted" style="margin-top:10px">Check-in mở vào ngày khám. <button class="link" data-fakeday="${a.id}">(demo) giả lập hôm nay là ngày khám</button></div>`;
+  }
+  return `<div class="appt"><div class="date">${pad(d.getDate())}<small>Thg ${d.getMonth()+1}</small></div>
+    <div style="flex:1"><b>${a.spec}</b> · ${a.time}<div class="muted">${a.doc}</div><div class="muted">${a.place}</div>
+    <div style="margin-top:4px"><span class="tag">${WM.VISIT[a.type].label}</span> <span class="tag orange">Mã ${a.id}</span></div></div></div>${act}`;
+}
+function renderAppts(){
+  const list=$("apptList");
+  if(!app.appts.length){
+    list.innerHTML=`<div class="card pull empty"><div style="font-size:52px;margin:8px 0">🗓️</div><p>Hiện tại bạn chưa có lịch hẹn nào</p>
+      <button class="primary" style="margin:12px auto" data-go="booking">Đặt hẹn</button></div>`; return;
+  }
+  list.innerHTML = app.appts.slice().reverse().map((a,i)=>`<div class="card ${i===0?"pull":""}">${apptHtml(a)}</div>`).join("");
+  list.querySelectorAll("[data-checkin]").forEach(b=>b.onclick=()=>checkIn(b.dataset.checkin));
+  list.querySelectorAll("[data-fakeday]").forEach(b=>b.onclick=()=>{ const a=app.appts.find(x=>x.id===b.dataset.fakeday); a.date=new Date().toDateString(); store.set("appts",app.appts); renderAppts(); log("fake_day"); });
+}
+
+/* =====================================================================
+   6. MÔ PHỎNG HÀNG CHỜ CỦA VIỆN (thay cho dữ liệu hệ thống xếp hàng / HIS / LIS)
+   ===================================================================== */
+const SCEN = {
+  busy:  { pace:1.25, inService:"kham_moi", ahead:["tai_kham","kham_moi","tai_kham","doc_kq","tai_kham","kham_moi"], pause:0 },
+  calm:  { pace:0.95, inService:"tai_kham", ahead:["tai_kham","doc_kq"], pause:0 },
+  delay: { pace:1.0,  inService:null,       ahead:["tai_kham","kham_moi","tai_kham","doc_kq"], pause:15 }
+};
+function station(o){ return Object.assign({ kind:"queue", queue:[], inService:null, done:[], pause:0, status:"todo", notified:false }, o); }
+/* Lịch sử các lượt đã khám trước khi mình đến (độ nhiễu nhỏ để kịch bản demo ổn định) */
+function seedHistory(st, types, n=6){ for(let i=0;i<n;i++){ const t=types[i%types.length]; st.done.push({type:t, actual:WM.VISIT[t].median*st.pace*Math.exp(0.12*WM.randn(rng))}); } }
+function arrive(st, inServiceType, aheadTypes, youType){
+  st.status="current";
+  st.inService = inServiceType ? { type:inServiceType, actual:WM.drawService(inServiceType,st.pace,rng), elapsed:2 } : null;
+  if(st.inService && st.inService.actual<3) st.inService.actual=3;
+  st.queue = aheadTypes.map(t=>({type:t, actual:WM.drawService(t,st.pace,rng)}));
+  st.queue.push({type:youType, actual:WM.drawService(youType,st.pace,rng), isYou:true});
+}
+function checkIn(id){
+  const a=app.appts.find(x=>x.id===id); a.status="checked"; store.set("appts",app.appts);
+  const sc=SCEN[$("scenario").value];
+  const clock=new Date(); clock.setSeconds(0,0);                      // đồng hồ bắt đầu từ giờ thật lúc check-in
+  askNotifyPermission(); unlockAudio();                               // cần thao tác của người dùng (bấm Check-in)
+  const exam = station({ id:"kham", name:`Khám ${a.spec}`, place:a.room, pace:sc.pace });
+  seedHistory(exam, ["tai_kham","kham_moi","tai_kham","doc_kq"], 8);
+  arrive(exam, sc.inService, sc.ahead, a.type); exam.pause=sc.pause;
+  app.sim = { appt:a, clock, scenario:$("scenario").value, revealed:false,
+    stations:[ station({ id:"ci", name:"Check-in", place:"Kiosk / quầy tầng 1", status:"done" }), exam ] };
+  pushNotif(`📍 Check-in thành công. Anh/chị đang chờ <b>${exam.name}</b> tại ${exam.place}.`);
+  app.history=[]; $("chatlog").innerHTML=""; $("emerg").style.display="none"; $("nurseCalled").style.display="none";
+  log("checkin",{scenario:app.sim.scenario,type:a.type});
+  go("today");
+}
+const cur = () => app.sim && app.sim.stations.find(s=>s.status==="current");
+function youIndex(st){ return st.queue.findIndex(p=>p.isYou); }
+function predict(st){
+  if(!st) return null;
+  if(st.kind==="result") return WM.predictWait({ inService:"kq_lis", elapsed:st.elapsed, pace:1, paceSd:0.1, seed:5 });
+  const i=youIndex(st); if(i<0) return null;
+  return WM.predictWait({ ahead:st.queue.slice(0,i).map(p=>p.type), inService:st.inService?.type||null,
+    elapsed:st.inService?.elapsed||0, pace:WM.estimatePace(st.done), paceSd:WM.paceSd(st.done.length), pause:st.pause, seed:11 });
+}
+function stepMinute(st){
+  if(st.kind==="result"){ st.elapsed++; return st.elapsed>=st.actual ? "you_done" : null; }
+  if(st.pause>0){ st.pause--; return null; }
+  if(st.inService){ st.inService.elapsed++;
+    if(st.inService.elapsed>=st.inService.actual){ const w=st.inService; st.done.push({type:w.type,actual:w.actual}); st.inService=null; if(w.isYou) return "you_done"; } }
+  if(!st.inService && st.queue.length){ const nx=st.queue.shift(); st.inService={...nx,elapsed:0}; if(nx.isYou) return "you_called"; }
+  return null;
+}
+function nextStation(){
+  const S=app.sim, a=S.appt, exam=S.stations.find(s=>s.id==="kham");
+  if(!S.revealed){
+    S.revealed=true;
+    const xn=station({ id:"xn", name:"Lấy máu xét nghiệm", place:"Phòng 112, tầng 1 (cạnh thang máy A)", pace:1.0 }); seedHistory(xn,["xn"],8);
+    const sa=station({ id:"sa", name:"Siêu âm", place:"Phòng 210, tầng 2", pace:1.1 }); seedHistory(sa,["sa"],5);
+    const kq=station({ id:"kq", kind:"result", name:"Chờ kết quả xét nghiệm", place:"Có thể chờ ở bất kỳ đâu – app sẽ báo", elapsed:0, actual:WM.drawService("kq_lis",1,rng) });
+    const back=station({ id:"doc", name:"Quay lại gặp bác sĩ đọc kết quả", place:a.room, pace:exam.pace }); back.done=exam.done;
+    S.stations.push(xn,sa,kq,back);
+    pushNotif("🩺 Đã khám xong. Bác sĩ chỉ định thêm <b>xét nghiệm máu</b> và <b>siêu âm</b>. Xem bước tiếp theo trong <b>Hôm nay tại viện</b>.", true, false, true);
+  }
+  const nx=S.stations.find(s=>s.status==="todo");
+  if(!nx){ pushNotif("🏁 Anh/chị đã hoàn thành các bước hôm nay. Chúc anh/chị mạnh khoẻ!"); return; }
+  if(nx.id==="xn") arrive(nx,"xn",["xn","xn","xn","xn"],"xn");
+  else if(nx.id==="sa") arrive(nx,"sa",["sa","sa"],"sa");
+  else if(nx.id==="kq") nx.status="current";
+  else if(nx.id==="doc") arrive(nx,"tai_kham",["doc_kq"],"doc_kq");
+  pushNotif(nx.kind==="result" ? `⏳ Đang chờ kết quả xét nghiệm. Anh/chị có thể đi ăn uống, app sẽ báo khi có kết quả.`
+                               : `➡️ Bây giờ anh/chị đến: <b>${nx.name}</b> – ${nx.place}.`, true, false, true);   // đổi bước → nhắn cả vào khung chat
+}
+function tick(minutes, auto=false){
+  const S=app.sim; if(!S){ if(!auto) toast("Chưa check-in lịch hẹn nào."); return; }
+  for(let m=0;m<minutes;m++){
+    const st=cur(); if(!st) break;
+    S.clock=new Date(S.clock.getTime()+60000);
+    const ev=stepMinute(st);
+    if(ev==="you_called"){ st.notified=true; pushNotif(`📣 <b>Đến lượt anh/chị!</b> Mời vào ${st.place}.`, true, true); }
+    else if(ev==="you_done"){ st.status="done"; if(st.kind==="result") pushNotif("📄 Đã có kết quả xét nghiệm. Mời anh/chị quay lại gặp bác sĩ.", true, true); nextStation(); }
+    else if(st.kind==="queue" && !st.notified && $("notifyToggle").checked){
+      const i=youIndex(st), total=i + (st.inService?1:0);
+      if(i>=0 && total<=2){ st.notified=true; pushNotif(`🔔 Còn <b>${total} người</b> trước anh/chị tại ${st.place}. Anh/chị vui lòng quay lại khu chờ.`, true, true); }
+    }
+  }
+  renderToday(); if(!auto) log("tick",{minutes});
+}
+
+/* ---------------------------------------------------------------------
+   ĐỒNG HỒ THẬT: hàng chờ tự tiến theo thời gian thực (nhân với tốc độ demo).
+   Mỗi giây cộng dồn thời gian đã trôi; đủ 1 phút thì hàng chờ tiến 1 phút.
+   Nếu trình duyệt tạm ngưng tab (khoá màn hình), lúc mở lại sẽ tự đuổi kịp.
+   Bản thật: hàng chờ chạy ở máy chủ của viện và gửi push notification, không phụ thuộc trang đang mở.
+   --------------------------------------------------------------------- */
+let speed = 1, debt = 0, lastReal = Date.now();
+setInterval(()=>{
+  const now=Date.now(), dt=now-lastReal; lastReal=now;
+  if(!app.sim || !cur() || speed===0) { renderLive(); return; }
+  debt += dt*speed;
+  const mins=Math.floor(debt/60000);
+  if(mins>0){ debt-=mins*60000; tick(Math.min(mins,600), true); }
+  renderLive();
+}, 1000);
+function renderLive(){
+  const el=$("nowLive"); if(!el) return;
+  if(!app.sim || !cur()){ el.textContent=""; return; }
+  if(speed===0){ el.innerHTML="⏸ Đồng hồ đang tạm dừng (demo)"; return; }
+  const secs=Math.max(0, Math.ceil((60000-debt)/speed/1000));
+  el.innerHTML = `<span style="color:#2f8f4e">●</span> Trực tiếp${speed!==1?` · đang tua ×${speed} (demo)`:""} · cập nhật tiếp sau ${secs}s`;
+}
+
+/* Thông báo hệ thống + âm thanh: để người bệnh rời khu chờ vẫn được gọi về */
+function askNotifyPermission(){
+  try{ if("Notification" in window && Notification.permission==="default" && $("notifyToggle").checked) Notification.requestPermission(); }catch(e){}
+}
+let audioCtx=null;
+function unlockAudio(){ try{ audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); audioCtx.resume(); }catch(e){} }
+function beep(){
+  if(!audioCtx) return;
+  try{ [0,0.35].forEach(t=>{ const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.frequency.value=880; g.gain.setValueAtTime(0.0001,audioCtx.currentTime+t);
+    g.gain.exponentialRampToValueAtTime(0.3,audioCtx.currentTime+t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+t+0.25);
+    o.connect(g).connect(audioCtx.destination); o.start(audioCtx.currentTime+t); o.stop(audioCtx.currentTime+t+0.3); }); }catch(e){}
+}
+async function systemNotify(text){
+  try{
+    if(!("Notification" in window) || Notification.permission!=="granted") return false;
+    const opts={ body:text, tag:"luot-kham", renotify:true, vibrate:[300,100,300] };
+    const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
+    if(reg){ await reg.showNotification("Chờ khám", opts); return true; }   // Android Chrome cần service worker
+    new Notification("Chờ khám", opts); return true;                       // máy tính
+  }catch(e){ return false; }
+}
+if("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+/* =====================================================================
+   7. HIỂN THỊ "HÔM NAY TẠI VIỆN"
+   ===================================================================== */
+function paceText(st){
+  const p=WM.estimatePace(st.done), pct=Math.round(Math.abs(p-1)*100);
+  if(p>1.08) return `chậm hơn thường lệ khoảng ${pct}%`;
+  if(p<0.92) return `nhanh hơn thường lệ khoảng ${pct}%`;
+  return "như thường lệ";
+}
+function explain(st){
+  if(st.kind==="result") return `Dựa trên thời gian trả kết quả xét nghiệm thường gặp (giả lập) và thời điểm lấy mẫu của anh/chị. Đã chờ ${st.elapsed} phút.`;
+  const i=youIndex(st); if(i<0) return "";
+  const cnt={}; st.queue.slice(0,i).forEach(p=>cnt[p.type]=(cnt[p.type]||0)+1);
+  const parts=Object.entries(cnt).map(([t,c])=>`${c} ${WM.VISIT[t].label.toLowerCase()}`).join(", ");
+  return `Ước tính dựa trên: ${i} người đang chờ trước${parts?` (${parts})`:""}${st.inService?", 1 người đang trong phòng":""}; `+
+         `tốc độ phòng hôm nay <b>${paceText(st)}</b> (theo ${Math.min(8,st.done.length)} lượt gần nhất)`+
+         (st.pause?`; bác sĩ đang tạm vắng để xử lý ca khẩn, dự kiến quay lại sau ~${st.pause} phút`:"")+".";
+}
+function renderToday(){
+  const S=app.sim;
+  $("todayEmpty").style.display = S?"none":"block"; $("todayBody").style.display = S?"block":"none";
+  $("chatfab").style.display = (S && $("s-today").classList.contains("on")) ? "flex":"none";
+  renderChatStatus(); markStale();
+  if(!S) return;
+  $("todaySub").textContent = `${S.appt.spec} · hẹn ${S.appt.time} · số ${S.appt.id}`;
+  const st=cur();
+  if(!st){ $("nowLabel").textContent="Hoàn tất"; $("nowStation").textContent="Anh/chị đã hoàn thành các bước hôm nay"; $("nowPlace").textContent="";
+    $("nowBig").textContent="✓"; $("nowEta").textContent=""; $("nowWhy").style.display="none"; }
+  else {
+    $("nowWhy").style.display="block";
+    $("nowStation").textContent=st.name; $("nowPlace").textContent=st.place;
+    const r=predict(st);
+    const at = m => hhmm(new Date(S.clock.getTime()+m*60000));
+    if(st.kind==="result"){ const [a,b]=WM.displayRange(r); $("nowLabel").textContent="Đang chờ kết quả";
+      $("nowBig").textContent="⏳"; $("nowEta").innerHTML = a===0
+        ? `Kết quả <b>sắp có</b>, chậm nhất khoảng <b>${b} phút</b> nữa<div class="muted">trước khoảng ${at(b)}</div>`
+        : `Kết quả dự kiến có sau <b>${a}–${b} phút</b><div class="muted">khoảng ${at(a)}–${at(b)}</div>`; }
+    else if(st.inService?.isYou){ $("nowLabel").textContent="ĐẾN LƯỢT ANH/CHỊ"; $("nowBig").textContent=S.appt.id; $("nowEta").innerHTML=`Mời vào <b>${st.place}</b>`; }
+    else { const i=youIndex(st), [a,b]=WM.displayRange(r);
+      $("nowLabel").textContent=`Đang chờ · số ${S.appt.id}`;
+      $("nowBig").textContent=`Còn ${i + (st.inService?1:0)} người`;
+      $("nowEta").innerHTML=`trước anh/chị · khoảng <b>${a}–${b} phút</b><div class="muted">dự kiến đến lượt khoảng <b>${at(a)}–${at(b)}</b></div>`; }
+    $("nowWhy").innerHTML = st.inService?.isYou ? "Anh/chị đang được phục vụ." : explain(st);
+  }
+  $("nowUpdated").textContent=`Nguồn: hệ thống xếp hàng (giả lập) · cập nhật lúc ${hhmm(S.clock)}`;
+  const steps=S.stations.map((s,i)=>`<li class="${s.status}"><span class="n">${s.status==="done"?"✓":i+1}</span><div><b>${s.name}</b><div class="muted">${s.place}</div></div></li>`);
+  if(!S.revealed) steps.push(`<li><span class="n">…</span><div class="muted">Các bước sau khám (xét nghiệm, chụp chiếu…) sẽ hiện khi bác sĩ chỉ định.</div></li>`);
+  $("steps").innerHTML=steps.join("");
+}
+
+/* "Rời chỗ X phút" – quy tắc cố định, dùng cận dưới P10 của ước tính */
+function canLeave(min){
+  const st=cur();
+  if(!app.sim) return {ok:false,text:"Anh/chị chưa check-in lịch hẹn nào."};
+  if(!st) return {ok:true,text:"Anh/chị đã xong các bước hôm nay."};
+  if(st.inService?.isYou) return {ok:false,text: (st.inService.elapsed<=1 ? `Đến lượt anh/chị tại ${st.place}. Xin đừng rời đi lúc này.` : servingText(st))};
+  const r=predict(st), lo=Math.floor(r.lo);
+  if(st.kind==="result") return lo>=min ? {ok:true,text:`Kịp. Kết quả sớm nhất khoảng ${lo} phút nữa mới có. App sẽ báo khi có kết quả.`}
+                                         : {ok:false,text:`Kết quả có thể có trong khoảng ${lo} phút. Anh/chị nên quay lại sớm hơn.`};
+  if(lo>=min+10) return {ok:true,text:`Kịp. Sớm nhất khoảng ${lo} phút nữa mới đến lượt. App sẽ báo khi còn 2 người${$("notifyToggle").checked?"":" (hãy bật thông báo ở trên)"}.`};
+  return {ok:false,text:`Không nên. Có thể đến lượt sau khoảng ${lo} phút, chưa đủ an toàn cho ${min} phút (cần dư 10 phút). Hãy chọn thời gian ngắn hơn hoặc hỏi nhân viên.`};
+}
+document.querySelectorAll("[data-leave]").forEach(b=>b.onclick=()=>{
+  const r=canLeave(+b.dataset.leave), box=$("leaveAns"); box.className="answer "+(r.ok?"ok":"no"); box.textContent=(r.ok?"✅ ":"⛔ ")+r.text;
+  log("leave_check",{min:+b.dataset.leave,ok:r.ok});
+});
+
+/* Thông báo */
+function pushNotif(html, popup=true, alert=false, chat=false){
+  const text=html.replace(/<[^>]+>/g,"");
+  app.notifs.unshift({html, t: app.sim?hhmm(app.sim.clock):hhmm(new Date())}); app.unread++;
+  if(popup) toast(html); renderBadge();
+  if(alert){ beep(); systemNotify(text).then(ok=>log("system_notify",{ok})); }    // báo cả khi người bệnh đang ở app khác
+  if((alert||chat) && app.sim){ openChat(); const src=`Hệ thống xếp hàng (giả lập) · ${hhmm(app.sim.clock)}`; stampLive(addMsg(text,"bot",src), src); }  // trợ lý chủ động nhắn vào khung chat
+  log("notify",{text});
+}
+function renderBadge(){ const d=$("notifDot"); d.style.display=app.unread?"grid":"none"; d.textContent=app.unread; }
+function renderNotifs(){
+  $("notifList").innerHTML = app.notifs.length ? app.notifs.map((n,i)=>`<div class="card ${i===0?"pull":""}"><div>${n.html}</div><div class="muted" style="font-size:12px;margin-top:4px">${n.t}</div></div>`).join("")
+    : `<div class="card pull empty"><p>Chưa có thông báo nào.</p></div>`;
+}
+
+/* =====================================================================
+   8. AN TOÀN: dấu hiệu khẩn cấp (chạy TRƯỚC AI, không phụ thuộc AI)
+   ===================================================================== */
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/g,"d");
+const RED_FLAGS = ["dau nguc","tuc nguc","kho tho","ngat","xiu","co giat","chay mau","yeu nua nguoi","liet","meo mieng","noi kho","dau du doi","lo mo","tim tai","bat tinh","choang","sot cao","muon chet","tu tu","dau bung du doi","non ra mau","ho ra mau"];
+const isEmergency = t => RED_FLAGS.some(k=>norm(t).includes(k));
+function triggerEmergency(src){ if(!app.sim){ toast("Hãy báo ngay nhân viên y tế gần nhất. Ngoài viện gọi <b>115</b>."); return; }
+  go("today"); $("emerg").style.display="block"; $("s-today").scrollTop=0; log("emergency",{source:src}); }
+$("feelBad").onclick=()=>triggerEmergency("button");
+$("callNurse").onclick=()=>{ $("nurseCalled").style.display="block"; log("call_nurse"); };
+
+/* =====================================================================
+   9. TRỢ LÝ: lấy thông tin TỪ ĐÂU?
+      - Không "biết" gì tự thân. Mỗi câu hỏi, app lấy ảnh chụp trạng thái từ hệ thống xếp hàng (snapshot)
+        → gửi kèm cho trợ lý → trợ lý chỉ diễn đạt lại. Mỗi câu trả lời ghi nguồn + giờ cập nhật.
+   ===================================================================== */
+const MEDICAL = ["chi so","thuoc","co sao khong","co nguy hiem","nguy hiem khong","chan doan","binh thuong khong","cao khong","thap khong","dieu tri","kieng","trieu chung","bi benh","benh gi","benh cua toi","benh nay","ket qua the nao","ket qua ra sao","nghia la gi"];
+const FACILITY_KEYS = [["ve sinh","nhà vệ sinh"],["wc","nhà vệ sinh"],["toilet","nhà vệ sinh"],["cang tin","căng tin"],["an sang","căng tin"],["thu ngan","quầy thu ngân"],["thanh toan","quầy thu ngân"],["nuoc","nước uống"],["ghe","ghế chờ"],["ngoi","ghế chờ"]];
+const REFUSE = "Câu này thuộc về chuyên môn y khoa nên em không trả lời được ạ. Anh/chị vui lòng hỏi trực tiếp bác sĩ khám cho mình. Nếu thấy trong người khó chịu hơn, hãy báo ngay nhân viên y tế gần nhất.";
+
+function snapshot(){
+  const S=app.sim, st=cur(); if(!S) return { da_check_in:false };
+  const r=st?predict(st):null, rng5=r?WM.displayRange(r):null;
+  return {
+    nguon:"Hệ thống xếp hàng của viện (GIẢ LẬP)", cap_nhat_luc:hhmm(S.clock), so_cua_ban:S.appt.id,
+    chang_hien_tai: st ? { ten:st.name, vi_tri:st.place, dang_den_luot: !!st.inService?.isYou,
+      so_nguoi_truoc: st.kind==="queue" && !st.inService?.isYou ? youIndex(st)+(st.inService?1:0) : null,
+      uoc_tinh_phut: rng5,
+      // code tính sẵn (cùng luật với nút "Rời chỗ"): LLM chỉ so sánh, không tự tính
+      roi_cho_toi_da_phut: st.inService?.isYou ? 0 : r ? Math.max(0, Math.floor(r.lo) - (st.kind==="result"?0:10)) : null,
+      giai_thich: st.inService?.isYou ? "" : explain(st).replace(/<[^>]+>/g,""),
+      la_cho_ket_qua: st.kind==="result" } : "đã hoàn thành",
+    cac_buoc: S.stations.map(s=>({ten:s.name, vi_tri:s.place, trang_thai:s.status})),
+    con_buoc_chua_chi_dinh: !S.revealed, tien_ich: FACILITIES,
+    bat_thong_bao_khi_con_2_nguoi: $("notifyToggle").checked
+  };
+}
+/* Triệu chứng nhẹ (không phải dấu hiệu đỏ): không trấn an, không giải thích – hướng tới nhân viên ngay */
+// So khớp CÓ DẤU và theo nguyên từ: bỏ dấu thì "đau" ≡ "đâu", và "sốt ruột" không phải là sốt.
+const SOFT_SYMPTOMS = ["mệt","đau","chóng mặt","buồn nôn","sốt","khó chịu trong người","hoa mắt","run","ớn lạnh","choáng váng"];
+const SOFT_EXCEPT = ["sốt ruột","mệt mỏi vì chờ","mệt vì chờ"];
+function hasWord(text, w){ return new RegExp(`(^|[\\s,.!?])${w}($|[\\s,.!?])`,"u").test(text); }
+function isSoftSymptom(q){ const t=q.toLowerCase(); if(SOFT_EXCEPT.some(e=>t.includes(e))) return false; return SOFT_SYMPTOMS.some(w=>hasWord(t,w)); }
+const SOFT_MSG = {text:"Em không đánh giá được tình trạng sức khoẻ ạ. Nếu anh/chị đang thấy không khoẻ, hãy báo ngay nhân viên y tế ở khu chờ hoặc bấm nút \"Tôi thấy không khoẻ\" trên màn hình chờ, nhân viên sẽ đến hỗ trợ. Anh/chị không cần chờ đến lượt.", src:"Quy tắc an toàn (không qua AI)"};
+const STATION_KEYS = [[/(xet nghiem|lay mau)/,"xn"],[/sieu am/,"sa"],[/(phong kham|bac si)/,"kham"]];
+/* Sau khi khám xong, người bệnh có thể chưa để ý là đã sang bước khác → luôn nói rõ bước hiện tại */
+function stageNote(st){ return (app.sim?.revealed && st && st.id!=="kham") ? `Bước hiện tại: ${st.name} (đã khám xong). ` : ""; }
+function servingText(st){
+  if((st.inService?.elapsed||0) <= 1) return `Đến lượt anh/chị, mời vào ${st.place}.`;
+  const verb = st.id==="xn" ? "lấy máu" : st.id==="sa" ? "siêu âm" : "khám";
+  return `Anh/chị đang được ${verb} tại ${st.place}. Xin đừng rời đi lúc này.`;
+}
+function ruleAnswer(q){
+  const t=norm(q), st=cur();
+  if(isSoftSymptom(q)) return SOFT_MSG;
+  if(MEDICAL.some(k=>t.includes(k))) return {text:REFUSE, src:"Quy tắc an toàn"};
+  if(/(chen|uu tien|len truoc|kham truoc|doi luot|nhuong)/.test(t))
+    return {text:"Em không thay đổi được thứ tự khám ạ, dùng app cũng không được ưu tiên. Nếu anh/chị có việc gấp hoặc cần hỗ trợ đặc biệt, vui lòng trao đổi trực tiếp với quầy tiếp đón.", src:"Quy tắc của ứng dụng"};
+  if(/(o dau|cho nao|duong nao|huong nao)/.test(t)){ const f=FACILITY_KEYS.find(([k])=>t.includes(k));
+    if(f) return {text:`${f[1][0].toUpperCase()+f[1].slice(1)}: ${FACILITIES[f[1]]}.`, src:"Danh mục tiện ích (giả lập)"};
+    const key=STATION_KEYS.find(([re])=>re.test(t));
+    const s=key && app.sim && app.sim.stations.find(x=>x.id===key[1]);
+    if(s) return {text:`${s.name}: ${s.place}.`, src:`Hệ thống xếp hàng (giả lập) · cập nhật ${hhmm(app.sim.clock)}`};
+    if(key && app.sim && !app.sim.revealed) return {text:"Bác sĩ chưa chỉ định bước này cho anh/chị. Nếu có chỉ định, app sẽ báo phòng và đường đi ngay.", src:"Hệ thống xếp hàng (giả lập)"};
+    return {text:"Em chưa có thông tin vị trí này ạ. Anh/chị vui lòng hỏi quầy hướng dẫn gần nhất.", src:"Ứng dụng (không có dữ liệu)"}; }
+  if(!app.sim) return {text:"Anh/chị chưa check-in. Khi đến viện, mở Lịch hẹn và bấm Check-in để em theo dõi lượt giúp anh/chị.", src:"Ứng dụng"};
+  const src=`Hệ thống xếp hàng (giả lập) · cập nhật ${hhmm(app.sim.clock)}`;
+  const m=t.match(/(\d+)\s*phut/);
+  if(/(ve sinh|wc|toilet|an sang|an uong|ra ngoai|roi cho|nghe dien thoai|co kip|kip khong)/.test(t)||m){
+    const min=m?+m[1]:(/(an sang|an uong|ra ngoai)/.test(t)?20:10); return {text:canLeave(min).text, src};
+  }
+  if(/(bao lau|may phut|khi nao|den luot|con may nguoi|lau khong|co ket qua|sao lau|vi sao|lau vay|lau the|lau qua)/.test(t)){
+    if(!st) return {text:"Anh/chị đã xong các bước hôm nay.", src};
+    if(st.inService?.isYou) return {text:servingText(st), src};
+    const [a,b]=WM.displayRange(predict(st));
+    if(st.kind==="result") return {text: stageNote(st) + (a===0 ? `Kết quả sắp có, chậm nhất khoảng ${b} phút nữa. App sẽ báo ngay khi có.` : `Kết quả dự kiến có sau khoảng ${a}–${b} phút. App sẽ báo khi có kết quả.`), src};
+    const why = /(sao lau|vi sao|lau vay|lau the|lau qua)/.test(t) ? ` Lý do: tốc độ phòng hôm nay ${paceText(st)}${st.pause?", bác sĩ đang tạm vắng xử lý ca khẩn":""}.` : "";
+    return {text:`${stageNote(st)}Còn ${youIndex(st)+(st.inService?1:0)} người trước anh/chị tại ${st.place}, khoảng ${a}–${b} phút.${why} Khi bảng gọi số ${app.sim.appt.id} là chuẩn.`, src};
+  }
+  if(/(tiep theo|sau do|sau kham|di dau tiep|phong nao|lam gi tiep|dau tiep|gi nua)/.test(t)){
+    if(!app.sim.revealed) return {text:"Các bước sau khám (xét nghiệm, chụp chiếu…) sẽ hiện khi bác sĩ chỉ định. App sẽ báo ngay khi có.", src};
+    if(!st) return {text:"Anh/chị đã xong các bước hôm nay.", src};
+    const i=app.sim.stations.indexOf(st), nx=app.sim.stations[i+1];
+    const then = nx ? ` Sau đó: ${nx.name} – ${nx.place}.` : " Đây là bước cuối cùng hôm nay.";
+    if(st.inService?.isYou) return {text: servingText(st) + then, src};
+    if(st.kind==="result") return {text:`Bây giờ anh/chị chờ kết quả xét nghiệm, có thể chờ ở bất kỳ đâu, app sẽ báo.${then}`, src};
+    return {text:`Bây giờ anh/chị đến: ${st.name} – ${st.place} (còn ${youIndex(st)+(st.inService?1:0)} người trước).${then}`, src};   // người bệnh hỏi "đi đâu" = bước đang chờ, chưa phải bước sau nữa
+  }
+  return {text:"Em chỉ hỗ trợ được về lượt chờ, vị trí phòng và bước tiếp theo. Anh/chị có thể hỏi: \"còn bao lâu đến lượt?\", \"đi vệ sinh 10 phút có kịp không?\", \"sau khám đi đâu?\". Việc khác xin hỏi quầy hướng dẫn.", src:"Ứng dụng"};
+}
+
+const SYSTEM_PROMPT = `Bạn là "Trợ lý Chờ khám" trong ứng dụng của một bệnh viện tại Việt Nam. Người dùng là người bệnh đang chờ tại viện, phần lớn 45–60 tuổi, thường mệt và sốt ruột.
+
+NGUỒN THÔNG TIN DUY NHẤT: khối <trang_thai_hang_cho> do hệ thống xếp hàng của viện cung cấp ở mỗi lượt hỏi. Bạn không có nguồn nào khác.
+
+PHẠM VI – chỉ giúp về hậu cần trong ngày khám:
+- còn bao lâu đến lượt, còn bao nhiêu người trước, vì sao lâu (dùng trường giai_thich)
+- có nên rời chỗ X phút không
+- bước tiếp theo là gì, phòng ở đâu
+- tiện ích (nhà vệ sinh, căng tin, nước uống, ghế chờ)
+
+QUY TẮC BẮT BUỘC:
+1. Chỉ dùng dữ liệu trong <trang_thai_hang_cho>. Không bịa thời gian, phòng hay quy trình. Nếu dữ liệu không có, nói "em chưa có thông tin này, anh/chị vui lòng hỏi quầy hướng dẫn".
+2. Thời gian luôn nói dưới dạng KHOẢNG (dùng uoc_tinh_phut) và nhắc rằng đây là ước tính; khi bảng/loa gọi số là chuẩn. Luôn nêu tên bước hiện tại (chang_hien_tai.ten), vì sau khi khám xong người bệnh có thể chưa biết mình đã chuyển sang bước khác (ví dụ xét nghiệm).
+3. Câu hỏi "có nên rời chỗ X phút" (đi ăn, vệ sinh, hút thuốc, gọi điện…): dùng DUY NHẤT trường roi_cho_toi_da_phut. Nếu X <= roi_cho_toi_da_phut thì trả lời "kịp" và nhắc app sẽ báo khi còn 2 người; nếu X > roi_cho_toi_da_phut thì khuyên không nên và nói có thể rời tối đa khoảng roi_cho_toi_da_phut phút. Không tự tính lại, không nói lưỡng lự.
+8. Chỉ khẳng định những gì có trong dữ liệu. Nếu người dùng nói đã xong một bước mà dữ liệu không ghi nhận, đừng xác nhận; nói trạng thái theo dữ liệu (ví dụ bước đó chưa được chỉ định).
+4. TUYỆT ĐỐI KHÔNG tư vấn y khoa: không giải thích triệu chứng, bệnh, thuốc, chỉ số, kết quả xét nghiệm; không nói "không sao đâu" hay "bình thường". Với các câu đó, trả lời đúng ý: "Câu này thuộc về chuyên môn y khoa nên em không trả lời được. Anh/chị vui lòng hỏi bác sĩ khám cho mình. Nếu thấy khó chịu hơn, hãy báo ngay nhân viên y tế gần nhất."
+5. Nếu người dùng mô tả bất kỳ triệu chứng nào (kể cả nhẹ như mệt, chóng mặt), KHÔNG trấn an và KHÔNG đánh giá: bảo họ báo ngay nhân viên y tế gần nhất hoặc bấm nút "Tôi thấy không khoẻ", không cần chờ đến lượt; ngoài viện gọi 115.
+6. Không hỏi và không ghi nhận họ tên, số điện thoại, CCCD, bệnh án.
+7. Không hứa ưu tiên hay chen lượt. Dùng app không thay đổi thứ tự.
+
+PHONG CÁCH: xưng "em", gọi "anh/chị"; tối đa 3 câu ngắn; không markdown, không emoji; thân thiện, bình tĩnh.`;
+
+let apiKey=null, provider="openai";
+const DEFAULT_MODEL = { openai:"gpt-4o", anthropic:"claude-opus-5-5" };
+try{ apiKey=sessionStorage.getItem("ak"); provider=sessionStorage.getItem("prov")||"openai"; }catch(e){}
+let model = (()=>{ try{ return sessionStorage.getItem("model"); }catch(e){ return null; } })() || DEFAULT_MODEL[provider];
+const providerLabel = () => provider==="openai" ? `OpenAI · ${model}` : `Claude · ${model}`;
+
+/* OpenAI Chat Completions – cùng system prompt, cùng snapshot, cùng các lớp an toàn chạy trước */
+async function openaiAnswer(q){
+  app.history.push({role:"user",content:q});
+  const res=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",
+    headers:{"Authorization":"Bearer "+apiKey,"Content-Type":"application/json"},
+    body:JSON.stringify({ model, max_completion_tokens:600,
+      messages:[{role:"system",content:SYSTEM_PROMPT+"\n\n<trang_thai_hang_cho>\n"+JSON.stringify(snapshot(),null,1)+"\n</trang_thai_hang_cho>"}, ...app.history.slice(-9)] })});
+  if(!res.ok) throw new Error("OpenAI "+res.status+": "+(await res.text()).slice(0,200));
+  const data=await res.json(), msg=data.choices?.[0]?.message;
+  if(msg?.refusal){ app.history.pop(); return {text:REFUSE, src:"Quy tắc an toàn"}; }
+  const text=(msg?.content||"").trim();
+  if(!text){ app.history.pop(); return ruleAnswer(q); }
+  app.history.push({role:"assistant",content:text});
+  return {text, src: app.sim?`OpenAI ${model} · dữ liệu: hệ thống xếp hàng (giả lập) lúc ${hhmm(app.sim.clock)}`:`OpenAI ${model}`};
+}
+async function claudeAnswer(q){
+  app.history.push({role:"user",content:q});
+  const body={ model, max_tokens:2000, output_config:{effort:"low"},
+    system: SYSTEM_PROMPT+"\n\n<trang_thai_hang_cho>\n"+JSON.stringify(snapshot(),null,1)+"\n</trang_thai_hang_cho>",
+    messages: app.history.slice(-9) };               // lịch sử là cặp user/assistant + 1 user cuối → -9 luôn bắt đầu bằng user
+  const headers={"x-api-key":apiKey,"anthropic-version":"2023-06-01","content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"};
+  let res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{...headers,"anthropic-beta":"server-side-fallback-2026-07-01"},body:JSON.stringify({...body,fallbacks:"default"})});
+  if(res.status===400) res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers,body:JSON.stringify(body)});
+  if(!res.ok) throw new Error("API "+res.status+": "+(await res.text()).slice(0,200));
+  const data=await res.json();
+  if(data.stop_reason==="refusal"){ app.history.pop(); return {text:REFUSE, src:"Quy tắc an toàn"}; }
+  const text=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("").trim();
+  if(!text){ app.history.pop(); return ruleAnswer(q); }
+  app.history.push({role:"assistant",content:text});
+  return {text, src: app.sim?`Claude · dữ liệu: hệ thống xếp hàng (giả lập) lúc ${hhmm(app.sim.clock)}`:"Claude"};
+}
+function addMsg(text,who,src,cls=""){
+  const d=document.createElement("div"); d.className=`msg ${who} ${cls}`; d.textContent=text;
+  if(src){ const s=document.createElement("span"); s.className="src"; s.textContent="Nguồn: "+src; d.appendChild(s); }
+  $("chatlog").appendChild(d); d.scrollIntoView({block:"end"}); return d;
+}
+async function ask(q){
+  q=q.trim(); if(!q) return; addMsg(q,"me");
+  if(isEmergency(q)){
+    addMsg("Anh/chị hãy báo ngay nhân viên y tế gần nhất hoặc bấm nút \"Gọi điều dưỡng ngay\". Đừng chờ đến lượt. Nếu ở ngoài viện, gọi 115.","bot","Quy tắc an toàn (không qua AI)","sys");
+    log("ask",{q,route:"emergency"}); setTimeout(()=>triggerEmergency("chat"),900); return;
+  }
+  if(isSoftSymptom(q)){ addMsg(SOFT_MSG.text,"bot",SOFT_MSG.src,"sys"); log("ask",{q,route:"soft_symptom"}); return; } // cũng không qua AI
+  let r, route;
+  if(apiKey){ const ph=addMsg("…","bot");
+    try{ r = provider==="openai" ? await openaiAnswer(q) : await claudeAnswer(q); route=provider; }
+    catch(e){ console.warn(e); if(app.history.at(-1)?.role==="user") app.history.pop(); r=ruleAnswer(q); route="rules_fallback";
+      const hint = /Failed to fetch|NetworkError/i.test(e.message) ? "Không gọi được API: thường do key sai/hết hạn, hết credit, hoặc mất mạng." : String(e.message).replace(/[<>]/g,"").slice(0,160);
+      toast(`⚠️ Gọi ${provider==="openai"?"OpenAI":"Claude"} lỗi, đã dùng luật cố định.<br><small>${hint}</small>`); }
+    ph.remove();
+  } else { r=ruleAnswer(q); route="rules"; }
+  const d=addMsg(r.text,"bot",r.src); stampLive(d, r.src); log("ask",{q,route,a:r.text});
+}
+
+/* Tin nhắn chat là ảnh chụp tại một thời điểm. Khi hàng chờ đổi (số người, chặng, đến lượt),
+   tin cũ bị làm mờ + gắn "ĐÃ CŨ", và dòng trạng thái trực tiếp ở đầu khung chat luôn đúng. */
+function statusKey(){ const st=cur(); if(!st) return "done"; if(st.kind==="result") return "kq";
+  return st.id+":"+(st.inService?.isYou ? "you" : youIndex(st)+(st.inService?1:0)); }
+function stampLive(el, src){ if(el && app.sim && /xếp hàng/i.test(src||"")) el.dataset.key=statusKey(); }
+function markStale(){ const k=statusKey(); document.querySelectorAll("#chatlog .msg[data-key]").forEach(m=>m.classList.toggle("stale", m.dataset.key!==k)); }
+function renderChatStatus(){
+  const bar=$("chatStatus"), S=app.sim, st=cur();
+  if(!S){ bar.style.display="none"; return; }
+  bar.style.display="block";
+  let t;
+  if(!st) t="Đã hoàn thành các bước hôm nay";
+  else if(st.inService?.isYou) t=`<b>ĐẾN LƯỢT</b> · mời vào ${st.place}`;
+  else { const [a,b]=WM.displayRange(predict(st));
+    t = st.kind==="result" ? (a===0?`Chờ kết quả · <b>sắp có</b> (chậm nhất ~${b} phút)`:`Chờ kết quả · <b>${a}–${b} phút</b>`)
+                           : `${st.name} · <b>còn ${youIndex(st)+(st.inService?1:0)} người</b> · khoảng ${a}–${b} phút`; }
+  bar.innerHTML=`<span style="color:#2f8f4e">●</span> Hiện tại (${hhmm(S.clock)}): ${t}`;
+}
+function openChat(){ renderChatStatus(); markStale();
+  $("botMode").textContent = apiKey ? `${providerLabel()} · chỉ hỗ trợ lượt chờ, vị trí, bước tiếp theo` : "Không AI (luật cố định) · lượt chờ, vị trí, bước tiếp theo";
+  if(!$("chatlog").children.length) addMsg("Chào anh/chị. Em có thể cho biết còn bao lâu đến lượt, có nên rời chỗ không và bước tiếp theo đi đâu. Em lấy thông tin từ hệ thống xếp hàng của viện.","bot");
+}
+const QCHIPS=["Còn bao lâu đến lượt tôi?","Sao hôm nay lâu vậy?","Tôi đi ăn sáng 20 phút có kịp không?","Khám xong tôi đi đâu tiếp?","Nhà vệ sinh ở đâu?","Kết quả xét nghiệm của tôi có sao không?","Tôi thấy tức ngực"];
+$("qchips").innerHTML=QCHIPS.map(c=>`<button>${c}</button>`).join("");
+$("qchips").querySelectorAll("button").forEach(b=>b.onclick=()=>ask(b.textContent));
+$("send").onclick=()=>{ ask($("q").value); $("q").value=""; };
+/* Ô hỏi nhanh ngay trên màn "Hôm nay tại viện" → mở khung chat và hỏi luôn */
+function askFromToday(q){ q=q.trim(); if(!q) return; go("chat"); ask(q); log("ask_from_today"); }
+$("todayChips").innerHTML=["Sao hôm nay lâu vậy?","Đi ăn sáng 20 phút có kịp không?","Khám xong đi đâu tiếp?"].map(c=>`<button>${c}</button>`).join("");
+$("todayChips").querySelectorAll("button").forEach(b=>b.onclick=()=>askFromToday(b.textContent));
+$("tsend").onclick=()=>{ askFromToday($("tq").value); $("tq").value=""; };
+$("tq").onkeydown=e=>{ if(e.key==="Enter") $("tsend").click(); };
+/* Nút tròn "Hỏi trợ lý" chỉ cần khi ô hỏi nhanh đã cuộn khỏi màn hình */
+let chatCardVisible=false;
+try{ new IntersectionObserver(es=>{ chatCardVisible=es[0].intersectionRatio>0.5; $("chatfab").style.visibility=chatCardVisible?"hidden":"visible"; },{root:$("s-today"),threshold:[0,0.5,1]}).observe($("tq").closest(".card")); }catch(e){}
+$("q").onkeydown=e=>{ if(e.key==="Enter") $("send").click(); };
+
+/* =====================================================================
+   10. LOG + ĐIỀU KHIỂN DEMO
+   ===================================================================== */
+const LOG=[];
+/* Người dùng có thể gõ SĐT/email/CCCD vào ô chat → che trước khi ghi log */
+const redact = s => typeof s!=="string" ? s : s
+  .replace(/[\w.+-]+@[\w-]+\.[\w.]+/g,"[email]")
+  .replace(/(\+?84|0)[\s.-]?\d(?:[\s.-]?\d){7,9}/g,"[sđt]")
+  .replace(/\b\d{9,12}\b/g,"[số]");
+function log(type,data={}){ for(const k of ["q","a","text"]) if(k in data) data[k]=redact(data[k]); LOG.push({t:new Date().toISOString(), sim:app.sim?hhmm(app.sim.clock):null, type, ...data}); $("logCount").textContent=`${LOG.length} sự kiện`; }
+$("exportLog").onclick=()=>{ const tester=$("tester").value.trim()||"T?";
+  const blob=new Blob([JSON.stringify({tester,mode:apiKey?provider:"rules",model:apiKey?model:null,events:LOG},null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`log-${tester}.json`; a.click(); };
+$("tick5").onclick=()=>tick(5); $("tick15").onclick=()=>tick(15);
+$("notifyToggle").onchange=e=>{ log("notify_toggle",{on:e.target.checked}); if(e.target.checked){ askNotifyPermission(); unlockAudio(); } };
+$("speed").onchange=e=>{ speed=+e.target.value; debt=0; renderLive(); log("speed",{speed}); };
+$("quickAppt").onclick=()=>{
+  const now=new Date(); now.setMinutes(now.getMinutes()+10);
+  const t = `${pad(now.getHours())}:${pad(Math.floor(now.getMinutes()/30)*30)}`;   // lịch "ngay bây giờ" vì đồng hồ chạy theo giờ thật
+  const a={ id:"H"+Date.now().toString().slice(-6), date:new Date().toDateString(), time:t, place:PLACES[0], spec:SPECS[0].name, specId:"noi", room:SPECS[0].room, doc:SPECS[0].docs[0], type:"tai_kham", status:"booked" };
+  app.appts.push(a); store.set("appts",app.appts); log("quick_appt"); go("appts");
+};
+$("resetAll").onclick=()=>{ app.appts=[]; app.sim=null; app.notifs=[]; app.unread=0; app.history=[]; store.del("appts"); store.del("draft"); $("chatlog").innerHTML=""; go("home"); };
+function setMode(){ $("modeTag").textContent=apiKey?providerLabel():"Không AI"; }
+$("provider").value=provider; $("model").value=model;
+$("provider").onchange=e=>{ provider=e.target.value; model=DEFAULT_MODEL[provider]; $("model").value=model; app.history=[]; setMode(); };
+$("saveKey").onclick=()=>{
+  apiKey=$("apiKey").value.trim()||null; provider=$("provider").value; model=$("model").value.trim()||DEFAULT_MODEL[provider];
+  try{ if(apiKey){ sessionStorage.setItem("ak",apiKey); sessionStorage.setItem("prov",provider); sessionStorage.setItem("model",model); } else sessionStorage.removeItem("ak"); }catch(e){}
+  app.history=[]; setMode(); log("set_provider",{provider,model,hasKey:!!apiKey});
+};
+
+paintIcons(); setMode(); renderBadge(); log("start");
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Dữ liệu khảo sát gốc có email/Zalo của người tham gia – KHÔNG commit
+*.xlsx
+*.xls
+# Log thử nghiệm thô có thể chứa thông tin nhập tay – chỉ commit sau khi đã rà soát
+05-prototype/logs/*.json
+# Ảnh chụp màn hình app thật có thể chứa SĐT/tên – chỉ commit ảnh đã che thông tin
+screenshots-raw/
